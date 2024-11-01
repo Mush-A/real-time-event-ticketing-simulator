@@ -91,6 +91,10 @@ public class ConfigurationBuilder {
         return new TicketPool(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketsCapacity);
     }
 
+    public TicketPool buildTicketPool(SimulationController simulationController) {
+        return new TicketPool(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketsCapacity, simulationController);
+    }
+
     public List<Vendor> buildVendors(TicketPool ticketPool) {
         List<Vendor> vendors = new ArrayList<>();
         for (int i = 0; i < numVendors; i++) {

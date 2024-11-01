@@ -18,11 +18,24 @@ public class TicketPool {
     private final Lock lock;
     private final Condition condition;
 
+    private SimulationController simulationController = null;
+
     public TicketPool(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketsCapacity) {
         this.totalTickets = totalTickets;
         this.ticketReleaseRate = ticketReleaseRate;
         this.customerRetrievalRate = customerRetrievalRate;
         this.maxTicketsCapacity = maxTicketsCapacity;
+        this.tickets = Collections.synchronizedList(new ArrayList<>());
+        this.lock = new ReentrantLock();
+        this.condition = lock.newCondition();
+    }
+
+    public TicketPool(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketsCapacity, SimulationController simulationController) {
+        this.totalTickets = totalTickets;
+        this.ticketReleaseRate = ticketReleaseRate;
+        this.customerRetrievalRate = customerRetrievalRate;
+        this.maxTicketsCapacity = maxTicketsCapacity;
+        this.simulationController = simulationController;
         this.tickets = Collections.synchronizedList(new ArrayList<>());
         this.lock = new ReentrantLock();
         this.condition = lock.newCondition();
@@ -36,12 +49,16 @@ public class TicketPool {
         lock.lock();
         try {
             if (tickets.size() == maxTicketsCapacity) {
-                System.out.println("Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.");
+                String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
+                System.out.println(message);
+                this.sendTicketPoolUpdate(message);
                 condition.await();
             } else {
                 Ticket ticket = new Ticket(100);
                 tickets.add(ticket);
-                System.out.println("Ticket added to the pool." + ticket);
+                String message = "Ticket added to the pool." + ticket;
+                System.out.println(message);
+                this.sendTicketPoolUpdate(message);
                 condition.signalAll();
             }
         } finally {
@@ -54,16 +71,26 @@ public class TicketPool {
         lock.lock();
         try {
             if (tickets.isEmpty()) {
-                System.out.println("Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.");
+                String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
+                System.out.println(message);
+                this.sendTicketPoolUpdate(message);
                 condition.await();
             } else {
                 Ticket ticket = tickets.remove(0).buyTicket();
-                System.out.println("Ticket removed from the pool." + ticket);
+                String message = "Ticket removed from the pool." + ticket;
+                System.out.println(message);
+                this.sendTicketPoolUpdate(message);
                 condition.signalAll();
             }
         } finally {
             lock.unlock();
         }
         Thread.sleep(customerRetrievalRate);
+    }
+
+    private void sendTicketPoolUpdate(String message) {
+        if (simulationController != null) {
+            simulationController.sendSimulationUpdate(message);
+        }
     }
 }

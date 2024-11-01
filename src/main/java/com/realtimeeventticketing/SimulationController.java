@@ -3,6 +3,8 @@ package com.realtimeeventticketing;
 import com.realtimeeventticketing.ConfigurationBuilder;
 import com.realtimeeventticketing.entities.Customer;
 import com.realtimeeventticketing.entities.Vendor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +14,9 @@ import java.util.List;
 public class SimulationController {
 
     private Simulation simulation;
+
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/start")
     public String startSimulation(
@@ -33,7 +38,7 @@ public class SimulationController {
                 .setNumCustomers(numCustomers);
 
         // Create TicketPool, Vendors, and Customers
-        TicketPool ticketPool = configBuilder.buildTicketPool();
+        TicketPool ticketPool = configBuilder.buildTicketPool(this);
         List<Vendor> vendors = configBuilder.buildVendors(ticketPool);
         List<Customer> customers = configBuilder.buildCustomers(ticketPool);
 
@@ -52,5 +57,9 @@ public class SimulationController {
         } else {
             return "No simulation is running.";
         }
+    }
+
+    public void sendSimulationUpdate(String update) {
+        messagingTemplate.convertAndSend("/topic/simulation", update);
     }
 }

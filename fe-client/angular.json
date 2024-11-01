@@ -27,7 +27,8 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.css",
+              "src/output.css"
             ],
             "scripts": []
           },
@@ -62,7 +63,8 @@
               "buildTarget": "fe-client:build:production"
             },
             "development": {
-              "buildTarget": "fe-client:build:development"
+              "buildTarget": "fe-client:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
