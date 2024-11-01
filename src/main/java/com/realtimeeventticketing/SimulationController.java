@@ -19,23 +19,16 @@ public class SimulationController {
     private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/start")
-    public String startSimulation(
-            @RequestParam int totalTickets,
-            @RequestParam int ticketReleaseRate,
-            @RequestParam int customerRetrievalRate,
-            @RequestParam int maxTicketsCapacity,
-            @RequestParam int numVendors,
-            @RequestParam int numCustomers,
-            @RequestParam int durationInSeconds) throws InterruptedException {
+    public String startSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
 
         // Build the configuration using the builder pattern
         ConfigurationBuilder configBuilder = new ConfigurationBuilder(null)
-                .setTotalTickets(totalTickets)
-                .setTicketReleaseRate(ticketReleaseRate)
-                .setCustomerRetrievalRate(customerRetrievalRate)
-                .setMaxTicketsCapacity(maxTicketsCapacity)
-                .setNumVendors(numVendors)
-                .setNumCustomers(numCustomers);
+                .setTotalTickets(request.getTotalTickets())
+                .setTicketReleaseRate(request.getTicketReleaseRate())
+                .setCustomerRetrievalRate(request.getCustomerRetrievalRate())
+                .setMaxTicketsCapacity(request.getMaxTicketsCapacity())
+                .setNumVendors(request.getNumVendors())
+                .setNumCustomers(request.getNumCustomers());
 
         // Create TicketPool, Vendors, and Customers
         TicketPool ticketPool = configBuilder.buildTicketPool(this);
@@ -44,9 +37,9 @@ public class SimulationController {
 
         // Initialize and start the simulation
         simulation = new Simulation(vendors, customers);
-        simulation.run(durationInSeconds);
+        simulation.run(request.getDurationInSeconds());
 
-        return "Simulation started for " + durationInSeconds + " seconds.";
+        return "Simulation started for " + request.getDurationInSeconds() + " seconds.";
     }
 
     @PostMapping("/stop")
