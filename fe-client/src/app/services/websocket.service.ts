@@ -2,13 +2,14 @@ import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import { Observable, Subject } from 'rxjs';
+import {TicketEvent} from '../models/TicketEvent';
 
 @Injectable({
   providedIn: 'root'
 })
 export class WebSocketService {
   private stompClient: Client;
-  private simulationUpdates: Subject<any> = new Subject<any>();
+  private simulationUpdates: Subject<TicketEvent> = new Subject<TicketEvent>();
 
   constructor() {
     this.stompClient = new Client();
@@ -22,7 +23,7 @@ export class WebSocketService {
       onConnect: () => {
         this.stompClient.subscribe('/topic/simulation', (message) => {
           if (message.body) {
-            this.simulationUpdates.next(message.body);
+            this.simulationUpdates.next(JSON.parse(message.body));
           }
         });
       },
@@ -36,7 +37,7 @@ export class WebSocketService {
     this.stompClient.activate();
   }
 
-  getSimulationUpdates(): Observable<any> {
+  getSimulationUpdates(): Observable<TicketEvent> {
     return this.simulationUpdates.asObservable();
   }
 

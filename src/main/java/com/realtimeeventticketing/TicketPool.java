@@ -1,6 +1,7 @@
 package com.realtimeeventticketing;
 
 import com.realtimeeventticketing.entities.Ticket;
+import com.realtimeeventticketing.entities.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,24 +42,29 @@ public class TicketPool {
         this.condition = lock.newCondition();
     }
 
-    public int getTotalTickets() {
-        return totalTickets;
-    }
-
-    public void addTicket() throws InterruptedException {
+    public void addTicket(User user) throws InterruptedException {
         lock.lock();
         try {
             if (tickets.size() == maxTicketsCapacity) {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
                 System.out.println(message);
-                this.sendTicketPoolUpdate(message);
+                this.sendTicketPoolUpdate(new TicketEvent(
+                        EventType.POOL_FULL,
+                        message
+                ));
                 condition.await();
             } else {
                 Ticket ticket = new Ticket(100);
                 tickets.add(ticket);
                 String message = "Ticket added to the pool." + ticket;
                 System.out.println(message);
-                this.sendTicketPoolUpdate(message);
+                this.sendTicketPoolUpdate(new TicketEvent(
+                        EventType.TICKET_ADDED,
+                        message,
+                        null,
+                        user.getName(),
+                        ticket
+                ));
                 condition.signalAll();
             }
         } finally {
@@ -67,19 +73,28 @@ public class TicketPool {
         Thread.sleep(ticketReleaseRate);
     }
 
-    public void removeTicket() throws InterruptedException {
+    public void removeTicket(User user) throws InterruptedException {
         lock.lock();
         try {
             if (tickets.isEmpty()) {
                 String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
                 System.out.println(message);
-                this.sendTicketPoolUpdate(message);
+                this.sendTicketPoolUpdate(new TicketEvent(
+                        EventType.POOL_EMPTY,
+                        message
+                ));
                 condition.await();
             } else {
                 Ticket ticket = tickets.remove(0).buyTicket();
                 String message = "Ticket removed from the pool." + ticket;
                 System.out.println(message);
-                this.sendTicketPoolUpdate(message);
+                this.sendTicketPoolUpdate(new TicketEvent(
+                        EventType.TICKET_PURCHASED,
+                        message,
+                        user.getName(),
+                        null,
+                        ticket
+                ));
                 condition.signalAll();
             }
         } finally {
@@ -88,9 +103,9 @@ public class TicketPool {
         Thread.sleep(customerRetrievalRate);
     }
 
-    private void sendTicketPoolUpdate(String message) {
+    private void sendTicketPoolUpdate(TicketEvent ticketEvent) {
         if (simulationController != null) {
-            simulationController.sendSimulationUpdate(message);
+            simulationController.sendSimulationUpdate(ticketEvent);
         }
     }
 }

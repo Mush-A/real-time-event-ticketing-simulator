@@ -23,12 +23,12 @@ public class Ticket {
         return id;
     }
 
-    public double getPrice() {
-        return price;
-    }
-
     public TicketStatus getStatus() {
         return status;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     @Override

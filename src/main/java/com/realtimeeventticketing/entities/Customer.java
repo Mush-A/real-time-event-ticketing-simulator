@@ -2,16 +2,13 @@ package com.realtimeeventticketing.entities;
 
 import com.realtimeeventticketing.TicketPool;
 
-public class Customer implements Runnable {
+public class Customer extends User implements Runnable {
 
-    private int id;
-    private String name;
-    private TicketPool ticketPool;
+    private final TicketPool ticketPool;
     private volatile boolean running = true;
 
     public Customer(String name, TicketPool ticketPool) {
-        this.id = (int) (Math.random() * 1000);
-        this.name = name;
+        super(0, name);
         this.ticketPool = ticketPool;
     }
 
@@ -19,7 +16,7 @@ public class Customer implements Runnable {
     public void run() {
         while (running) {
             try {
-                ticketPool.removeTicket();
+                ticketPool.removeTicket(this);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -28,13 +25,5 @@ public class Customer implements Runnable {
 
     public void stop() {
         running = false;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
     }
 }

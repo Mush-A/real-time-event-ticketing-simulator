@@ -59,7 +59,7 @@ public class SimulationController {
     }
 
     @GetMapping("/")
-    public void sendSimulationUpdate(String update) {
-        messagingTemplate.convertAndSend("/topic/simulation", update);
+    public void sendSimulationUpdate(TicketEvent ticketEvent) {
+        messagingTemplate.convertAndSend("/topic/simulation", ticketEvent);
     }
 }

@@ -103,10 +103,46 @@
   <!-- Right Message Section -->
   <div class="flex flex-col w-1/2 flex-grow">
     <div class="flex-grow bg-white shadow-lg rounded-lg p-4 overflow-hidden">
-      <h2 class="text-xl font-semibold text-gray-800">Messages</h2>
-      <div class="max-h-full overflow-y-scroll py-4">
-        <div *ngFor="let message of messages$ | async" class="bg-gray-200 p-1 rounded mb-2 transition duration-200 shadow-sm">
-          {{ message }}
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Messages</h2>
+      <div class="max-h-full overflow-y-scroll space-y-4 py-4">
+        <div
+          *ngFor="let message of messages$ | async"
+          [ngClass]="getMessageClass(message.eventType)"
+          class="p-4 rounded transition duration-200 shadow-sm"
+        >
+          <div class="flex flex-col space-y-1">
+            <span class="text-lg font-bold">{{ message.eventType }}</span>
+
+            <!-- Optional fields with conditional rendering -->
+            <ng-container *ngIf="message.customerName">
+              <div class="flex gap-2">
+                <span class="font-bold text-gray-600">Customer Name: </span>
+                <span class="text-gray-800">{{ message.customerName }}</span>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="message.vendorName">
+              <div class="flex gap-2">
+                <span class="font-bold text-gray-600">Vendor Name:</span>
+                <span class="text-gray-800">{{ message.vendorName }}</span>
+              </div>
+            </ng-container>
+
+            <ng-container *ngIf="message.ticket">
+              <div class="flex gap-2">
+                <span class="font-bold text-gray-600">Ticket ID: </span>
+                <span class="text-gray-800">{{ message.ticket.id }}</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="font-bold text-gray-600">Ticket Price: </span>
+                <span class="text-gray-800">{{ message.ticket.price | currency }}</span>
+              </div>
+              <div class="flex gap-2">
+                <span class="font-bold text-gray-600">Ticket Status: </span>
+                <span class="text-gray-800">{{ message.ticket.status }}</span>
+              </div>
+            </ng-container>
+          </div>
         </div>
       </div>
     </div>

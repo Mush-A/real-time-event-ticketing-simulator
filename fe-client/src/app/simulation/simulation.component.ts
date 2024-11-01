@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { WebSocketService } from '../services/websocket.service';
 import { BehaviorSubject } from 'rxjs';
+import {EventType, TicketEvent} from '../models/TicketEvent';
 
 @Component({
   selector: 'app-simulation',
@@ -17,7 +18,7 @@ import { BehaviorSubject } from 'rxjs';
 })
 export class SimulationComponent {
   simulationForm: FormGroup;
-  private messagesSubject = new BehaviorSubject<string[]>([]);
+  private messagesSubject = new BehaviorSubject<TicketEvent[]>([]);
   messages$ = this.messagesSubject.asObservable();
 
   constructor(private fb: FormBuilder, private http: HttpClient, private ws: WebSocketService) {
@@ -50,11 +51,10 @@ export class SimulationComponent {
       this.http.post('api/simulation/start', this.simulationForm.value, { responseType: 'text' })
         .subscribe({
           next: (response: string) => {
-            // Push response as a message
-            this.messagesSubject.next([...this.messagesSubject.value, response]);
+            console.log('Simulation started: ' + response);
           },
           error: (error) => {
-            this.messagesSubject.next([...this.messagesSubject.value, "Error starting simulation: " + error.message]);
+            console.error('Error starting simulation: ' + error);
           }
         });
     }
@@ -65,11 +65,26 @@ export class SimulationComponent {
     this.http.post('api/simulation/stop', {}, { responseType: 'text' })
       .subscribe({
         next: (response: string) => {
-          this.messagesSubject.next([...this.messagesSubject.value, response]);
+          console.log('Simulation stopped: ' + response);
         },
         error: (error) => {
-          this.messagesSubject.next([...this.messagesSubject.value, "Error stopping simulation: " + error.message]);
+          console.error('Error stopping simulation: ' + error);
         }
       });
+  }
+
+  getMessageClass(eventType: EventType): string {
+    switch (eventType) {
+      case EventType.TICKET_PURCHASED:
+        return 'bg-green-200';
+      case EventType.TICKET_ADDED:
+        return 'bg-blue-200';
+      case EventType.POOL_EMPTY:
+        return 'bg-red-200';
+      case EventType.POOL_FULL:
+        return 'bg-yellow-200';
+      default:
+        return 'bg-gray-200';
+    }
   }
 }
