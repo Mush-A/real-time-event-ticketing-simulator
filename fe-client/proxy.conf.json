@@ -5,5 +5,13 @@
     "pathRewrite": {
       "^/api": ""
     }
+  },
+  "/stream": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "ws": true,
+    "pathRewrite": {
+      "^/stream": ""
+    }
   }
 }

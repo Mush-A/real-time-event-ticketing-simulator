@@ -38,7 +38,9 @@ public class Simulation {
 
         if (executorService != null) {
             executorService.shutdown();
-            executorService.awaitTermination(5, TimeUnit.SECONDS);
+            if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();  // Force shutdown if tasks are not terminating
+            }
         }
     }
 }

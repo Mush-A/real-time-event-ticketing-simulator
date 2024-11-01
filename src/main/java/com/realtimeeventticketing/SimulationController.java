@@ -1,6 +1,5 @@
 package com.realtimeeventticketing;
 
-import com.realtimeeventticketing.ConfigurationBuilder;
 import com.realtimeeventticketing.entities.Customer;
 import com.realtimeeventticketing.entities.Vendor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/simulation")
 public class SimulationController {
 
     private Simulation simulation;
@@ -18,9 +16,8 @@ public class SimulationController {
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
-    @PostMapping("/start")
-    public String startSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
-
+    @PostMapping("/simulation/start")
+    public String startSimulation(@RequestBody SimulationRequest request) {
         // Build the configuration using the builder pattern
         ConfigurationBuilder configBuilder = new ConfigurationBuilder(null)
                 .setTotalTickets(request.getTotalTickets())
@@ -35,14 +32,23 @@ public class SimulationController {
         List<Vendor> vendors = configBuilder.buildVendors(ticketPool);
         List<Customer> customers = configBuilder.buildCustomers(ticketPool);
 
-        // Initialize and start the simulation
+        // Initialize the simulation
         simulation = new Simulation(vendors, customers);
-        simulation.run(request.getDurationInSeconds());
+
+        // Run the simulation asynchronously
+        new Thread(() -> {
+            try {
+                simulation.run(request.getDurationInSeconds());
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }).start();
 
         return "Simulation started for " + request.getDurationInSeconds() + " seconds.";
     }
 
-    @PostMapping("/stop")
+
+    @PostMapping("/simulation/stop")
     public String stopSimulation() throws InterruptedException {
         if (simulation != null) {
             simulation.stop();
@@ -52,6 +58,7 @@ public class SimulationController {
         }
     }
 
+    @GetMapping("/")
     public void sendSimulationUpdate(String update) {
         messagingTemplate.convertAndSend("/topic/simulation", update);
     }

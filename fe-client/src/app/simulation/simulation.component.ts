@@ -1,7 +1,9 @@
-import {Component} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {HttpClient} from '@angular/common/http';
-import {CommonModule} from '@angular/common';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { CommonModule } from '@angular/common';
+import { WebSocketService } from '../services/websocket.service';
+import { BehaviorSubject } from 'rxjs';
 
 @Component({
   selector: 'app-simulation',
@@ -11,22 +13,34 @@ import {CommonModule} from '@angular/common';
     CommonModule,
   ],
   templateUrl: './simulation.component.html',
-  styleUrl: './simulation.component.css'
+  styleUrls: ['./simulation.component.css']
 })
 export class SimulationComponent {
   simulationForm: FormGroup;
-  message: string | null = null;
+  private messagesSubject = new BehaviorSubject<string[]>([]);
+  messages$ = this.messagesSubject.asObservable();
 
-  constructor(private fb: FormBuilder, private http: HttpClient) {
+  constructor(private fb: FormBuilder, private http: HttpClient, private ws: WebSocketService) {
     // Initialize the form group with validators
     this.simulationForm = this.fb.group({
-      totalTickets: [0, Validators.required],
-      ticketReleaseRate: [0, Validators.required],
-      customerRetrievalRate: [0, Validators.required],
-      maxTicketsCapacity: [0, Validators.required],
-      numVendors: [0, Validators.required],
-      numCustomers: [0, Validators.required],
-      durationInSeconds: [0, Validators.required],
+      totalTickets: [1000, Validators.required],
+      ticketReleaseRate: [1000, Validators.required],
+      customerRetrievalRate: [1000, Validators.required],
+      maxTicketsCapacity: [1000, Validators.required],
+      numVendors: [1, Validators.required],
+      numCustomers: [1, Validators.required],
+      durationInSeconds: [10, Validators.required],
+    });
+
+    // Subscribe to the WebSocket service to receive updates
+    this.ws.getSimulationUpdates().subscribe({
+      next: (update) => {
+        // Push new messages to the BehaviorSubject
+        this.messagesSubject.next([...this.messagesSubject.value, update]);
+      },
+      error: (error) => {
+        console.error('Error receiving WebSocket update: ' + error);
+      }
     });
   }
 
@@ -35,8 +49,13 @@ export class SimulationComponent {
       // Send a POST request to start the simulation
       this.http.post('api/simulation/start', this.simulationForm.value, { responseType: 'text' })
         .subscribe({
-          next: (response: string) => this.message = response,
-          error: (error) => this.message = "Error starting simulation: " + error.message
+          next: (response: string) => {
+            // Push response as a message
+            this.messagesSubject.next([...this.messagesSubject.value, response]);
+          },
+          error: (error) => {
+            this.messagesSubject.next([...this.messagesSubject.value, "Error starting simulation: " + error.message]);
+          }
         });
     }
   }
@@ -45,8 +64,12 @@ export class SimulationComponent {
     // Send a POST request to stop the simulation
     this.http.post('api/simulation/stop', {}, { responseType: 'text' })
       .subscribe({
-        next: (response: string) => this.message = response,
-        error: (error) => this.message = "Error stopping simulation: " + error.message
+        next: (response: string) => {
+          this.messagesSubject.next([...this.messagesSubject.value, response]);
+        },
+        error: (error) => {
+          this.messagesSubject.next([...this.messagesSubject.value, "Error stopping simulation: " + error.message]);
+        }
       });
   }
 }

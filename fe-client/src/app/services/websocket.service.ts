@@ -1,4 +1,3 @@
-// src/app/websocket.service.ts
 import { Injectable } from '@angular/core';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
@@ -11,20 +10,19 @@ export class WebSocketService {
   private stompClient: Client;
   private simulationUpdates: Subject<any> = new Subject<any>();
 
-  constructor(stompClient: Client) {
-    this.stompClient = stompClient;
+  constructor() {
+    this.stompClient = new Client();
     this.initializeWebSocketConnection();
   }
 
   initializeWebSocketConnection(): void {
     // Set up the client and specify the broker URL
     this.stompClient = new Client({
-      webSocketFactory: () => new SockJS('http://localhost:8080/ws/simulation-websocket'), // WebSocket endpoint
-      debug: (str) => console.log(str),
+      webSocketFactory: () => new SockJS('/stream/simulation-websocket'), // WebSocket endpoint
       onConnect: () => {
         this.stompClient.subscribe('/topic/simulation', (message) => {
           if (message.body) {
-            this.simulationUpdates.next(JSON.parse(message.body));
+            this.simulationUpdates.next(message.body);
           }
         });
       },
@@ -38,8 +36,8 @@ export class WebSocketService {
     this.stompClient.activate();
   }
 
-  getSimulationUpdates(): Observable<any>{
-    return this.simulationUpdates.asObservable()
+  getSimulationUpdates(): Observable<any> {
+    return this.simulationUpdates.asObservable();
   }
 
   disconnect(): void {
