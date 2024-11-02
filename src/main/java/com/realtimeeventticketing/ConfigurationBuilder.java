@@ -88,17 +88,17 @@ public class ConfigurationBuilder {
     }
 
     public TicketPool buildTicketPool() {
-        return new TicketPool(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketsCapacity);
+        return new TicketPool(totalTickets, maxTicketsCapacity);
     }
 
     public TicketPool buildTicketPool(SimulationController simulationController) {
-        return new TicketPool(totalTickets, ticketReleaseRate, customerRetrievalRate, maxTicketsCapacity, simulationController);
+        return new TicketPool(totalTickets, maxTicketsCapacity, simulationController);
     }
 
     public List<Vendor> buildVendors(TicketPool ticketPool) {
         List<Vendor> vendors = new ArrayList<>();
         for (int i = 0; i < numVendors; i++) {
-            vendors.add(new Vendor("Vendor " + (i + 1), ticketPool));
+            vendors.add(new Vendor("Vendor " + (i + 1), ticketPool, this.ticketReleaseRate));
         }
         return vendors;
     }
@@ -106,7 +106,7 @@ public class ConfigurationBuilder {
     public List<Customer> buildCustomers(TicketPool ticketPool) {
         List<Customer> customers = new ArrayList<>();
         for (int i = 0; i < numCustomers; i++) {
-            customers.add(new Customer("Customer " + (i + 1), ticketPool));
+            customers.add(new Customer("Customer " + (i + 1), ticketPool, this.customerRetrievalRate));
         }
         return customers;
     }

@@ -12,8 +12,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class TicketPool {
     private final int totalTickets;
-    private final int ticketReleaseRate;
-    private final int customerRetrievalRate;
     private final int maxTicketsCapacity;
     private final List<Ticket> tickets;
     private final Lock lock;
@@ -21,20 +19,16 @@ public class TicketPool {
 
     private SimulationController simulationController = null;
 
-    public TicketPool(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketsCapacity) {
+    public TicketPool(int totalTickets, int maxTicketsCapacity) {
         this.totalTickets = totalTickets;
-        this.ticketReleaseRate = ticketReleaseRate;
-        this.customerRetrievalRate = customerRetrievalRate;
         this.maxTicketsCapacity = maxTicketsCapacity;
         this.tickets = Collections.synchronizedList(new ArrayList<>());
         this.lock = new ReentrantLock();
         this.condition = lock.newCondition();
     }
 
-    public TicketPool(int totalTickets, int ticketReleaseRate, int customerRetrievalRate, int maxTicketsCapacity, SimulationController simulationController) {
+    public TicketPool(int totalTickets, int maxTicketsCapacity, SimulationController simulationController) {
         this.totalTickets = totalTickets;
-        this.ticketReleaseRate = ticketReleaseRate;
-        this.customerRetrievalRate = customerRetrievalRate;
         this.maxTicketsCapacity = maxTicketsCapacity;
         this.simulationController = simulationController;
         this.tickets = Collections.synchronizedList(new ArrayList<>());
@@ -71,7 +65,6 @@ public class TicketPool {
         } finally {
             lock.unlock();
         }
-        if (user.isRunning()) Thread.sleep(ticketReleaseRate);
     }
 
     public void removeTicket(User user) throws InterruptedException {
@@ -102,7 +95,6 @@ public class TicketPool {
         } finally {
             lock.unlock();
         }
-        if (user.isRunning()) Thread.sleep(customerRetrievalRate);
     }
 
     public void stopAllWaiting() {
