@@ -14,16 +14,11 @@ public class SimulationController {
     private Simulation simulation;
     private TicketPool ticketPool;
 
-    private Thread simulationThread;
-
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/simulation/start")
-    public String startSimulation(@RequestBody SimulationRequest request) {
-        if (simulationThread != null && simulationThread.isAlive()) {
-            return "Simulation is already running.";
-        }
+    public String startSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
 
         // Build the configuration using the builder pattern
         ConfigurationBuilder configBuilder = new ConfigurationBuilder(null)
@@ -43,14 +38,7 @@ public class SimulationController {
         simulation = new Simulation(vendors, customers);
 
         // Run the simulation asynchronously
-        simulationThread = new Thread(() -> {
-            try {
-                simulation.run(request.getDurationInSeconds());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
-        simulationThread.start();
+        simulation.run(request.getDurationInSeconds());
 
         return "Simulation started for " + request.getDurationInSeconds() + " seconds.";
     }
@@ -61,7 +49,6 @@ public class SimulationController {
         if (simulation != null) {
             simulation.stop();
             ticketPool.stopAllWaiting();
-            simulationThread.join();
             return "Simulation stopped.";
         } else {
             return "No simulation is running.";

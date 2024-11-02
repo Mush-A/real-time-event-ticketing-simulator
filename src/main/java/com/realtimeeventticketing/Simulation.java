@@ -20,13 +20,25 @@ public class Simulation {
     }
 
     public void run(int durationInSeconds) throws InterruptedException {
-        vendors.forEach(executorService::submit);
-        customers.forEach(executorService::submit);
+
+        for (Vendor vendor : vendors) {
+            executorService.submit(vendor);
+        }
+
+        for (Customer customer : customers) {
+            executorService.submit(customer);
+        }
     }
 
     public void stop() throws InterruptedException {
-        vendors.forEach(Vendor::stop);
-        customers.forEach(Customer::stop);
+
+        for (Vendor vendor : vendors) {
+            vendor.stop();
+        }
+
+        for (Customer customer : customers) {
+            customer.stop();
+        }
 
         if (executorService != null) {
             executorService.shutdown();
@@ -34,5 +46,9 @@ public class Simulation {
                 executorService.shutdownNow();  // Force shutdown if tasks are not terminating
             }
         }
+    }
+
+    public boolean isRunning() {
+        return !executorService.isShutdown();
     }
 }
