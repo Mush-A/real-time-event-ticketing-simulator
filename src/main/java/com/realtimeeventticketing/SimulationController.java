@@ -2,7 +2,6 @@ package com.realtimeeventticketing;
 
 import com.realtimeeventticketing.entities.Customer;
 import com.realtimeeventticketing.entities.Vendor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +13,11 @@ public class SimulationController {
     private Simulation simulation;
     private TicketPool ticketPool;
 
-    @Autowired
-    private SimpMessagingTemplate messagingTemplate;
+    private final SimpMessagingTemplate messagingTemplate;
+
+    public SimulationController(SimpMessagingTemplate messagingTemplate) {
+        this.messagingTemplate = messagingTemplate;
+    }
 
     @PostMapping("/simulation/start")
     public String startSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
@@ -34,10 +36,7 @@ public class SimulationController {
         List<Vendor> vendors = configBuilder.buildVendors(ticketPool);
         List<Customer> customers = configBuilder.buildCustomers(ticketPool);
 
-        // Initialize the simulation
         simulation = new Simulation(vendors, customers);
-
-        // Run the simulation asynchronously
         simulation.run();
 
         return "Simulation started";
@@ -55,7 +54,6 @@ public class SimulationController {
         }
     }
 
-    @GetMapping("/")
     public void sendSimulationUpdate(TicketEvent ticketEvent) {
         messagingTemplate.convertAndSend("/topic/simulation", ticketEvent);
     }
