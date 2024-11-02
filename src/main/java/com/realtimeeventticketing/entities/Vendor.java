@@ -13,18 +13,12 @@ public class Vendor extends User {
 
     @Override
     public void run() {
-        while (running) {
+        while (isRunning()) {
             try {
                 ticketPool.addTicket(this);
+                Thread.sleep(getRate());
             } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (isRunning()) {
-                try {
-                    Thread.sleep(getRate());
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                throw new RuntimeException(e);
             }
         }
     }

@@ -4,7 +4,7 @@ public abstract class User implements Runnable {
     private final int id;
     private final String name;
     private final int rate;
-    protected volatile boolean running = true;
+    private volatile boolean running = true;
 
     protected User(int id, String name, int rate) {
         this.id = id;
