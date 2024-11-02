@@ -26,7 +26,7 @@ public class Main {
 
         // Run the simulation
         Simulation simulationRunner = new Simulation(vendors, customers);
-        simulationRunner.run(10);
+        simulationRunner.run();
 
         System.out.println("All threads have finished execution.");
     }

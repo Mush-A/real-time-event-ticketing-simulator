@@ -19,7 +19,7 @@ public class Simulation {
         this.executorService =  Executors.newFixedThreadPool(vendors.size() + customers.size());
     }
 
-    public void run(int durationInSeconds) throws InterruptedException {
+    public void run() throws InterruptedException {
 
         for (Vendor vendor : vendors) {
             executorService.submit(vendor);

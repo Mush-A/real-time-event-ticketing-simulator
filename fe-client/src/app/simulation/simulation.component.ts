@@ -30,7 +30,6 @@ export class SimulationComponent {
       maxTicketsCapacity: [1000, Validators.required],
       numVendors: [1, Validators.required],
       numCustomers: [1, Validators.required],
-      durationInSeconds: [10, Validators.required],
     });
 
     // Subscribe to the WebSocket service to receive updates

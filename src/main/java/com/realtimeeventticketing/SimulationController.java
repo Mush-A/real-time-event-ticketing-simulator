@@ -38,9 +38,9 @@ public class SimulationController {
         simulation = new Simulation(vendors, customers);
 
         // Run the simulation asynchronously
-        simulation.run(request.getDurationInSeconds());
+        simulation.run();
 
-        return "Simulation started for " + request.getDurationInSeconds() + " seconds.";
+        return "Simulation started";
     }
 
 

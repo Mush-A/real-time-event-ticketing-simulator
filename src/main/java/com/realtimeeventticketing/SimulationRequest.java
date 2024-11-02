@@ -7,9 +7,6 @@ public class SimulationRequest {
     private int maxTicketsCapacity;
     private int numVendors;
     private int numCustomers;
-    private int durationInSeconds;
-
-    // Getters and setters
 
     public int getTotalTickets() {
         return totalTickets;
@@ -57,13 +54,5 @@ public class SimulationRequest {
 
     public void setNumCustomers(int numCustomers) {
         this.numCustomers = numCustomers;
-    }
-
-    public int getDurationInSeconds() {
-        return durationInSeconds;
-    }
-
-    public void setDurationInSeconds(int durationInSeconds) {
-        this.durationInSeconds = durationInSeconds;
     }
 }
