@@ -12,12 +12,19 @@ import java.util.List;
 public class SimulationController {
 
     private Simulation simulation;
+    private TicketPool ticketPool;
+
+    private Thread simulationThread;
 
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
 
     @PostMapping("/simulation/start")
     public String startSimulation(@RequestBody SimulationRequest request) {
+        if (simulationThread != null && simulationThread.isAlive()) {
+            return "Simulation is already running.";
+        }
+
         // Build the configuration using the builder pattern
         ConfigurationBuilder configBuilder = new ConfigurationBuilder(null)
                 .setTotalTickets(request.getTotalTickets())
@@ -28,7 +35,7 @@ public class SimulationController {
                 .setNumCustomers(request.getNumCustomers());
 
         // Create TicketPool, Vendors, and Customers
-        TicketPool ticketPool = configBuilder.buildTicketPool(this);
+        ticketPool = configBuilder.buildTicketPool(this);
         List<Vendor> vendors = configBuilder.buildVendors(ticketPool);
         List<Customer> customers = configBuilder.buildCustomers(ticketPool);
 
@@ -36,13 +43,14 @@ public class SimulationController {
         simulation = new Simulation(vendors, customers);
 
         // Run the simulation asynchronously
-        new Thread(() -> {
+        simulationThread = new Thread(() -> {
             try {
                 simulation.run(request.getDurationInSeconds());
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
+                e.printStackTrace();
             }
-        }).start();
+        });
+        simulationThread.start();
 
         return "Simulation started for " + request.getDurationInSeconds() + " seconds.";
     }
@@ -52,6 +60,8 @@ public class SimulationController {
     public String stopSimulation() throws InterruptedException {
         if (simulation != null) {
             simulation.stop();
+            ticketPool.stopAllWaiting();
+            simulationThread.join();
             return "Simulation stopped.";
         } else {
             return "No simulation is running.";

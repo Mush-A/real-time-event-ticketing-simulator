@@ -45,6 +45,7 @@ public class TicketPool {
     public void addTicket(User user) throws InterruptedException {
         lock.lock();
         try {
+            if (!user.isRunning()) return;
             if (tickets.size() == maxTicketsCapacity) {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
                 System.out.println(message);
@@ -70,11 +71,12 @@ public class TicketPool {
         } finally {
             lock.unlock();
         }
-        Thread.sleep(ticketReleaseRate);
+        if (user.isRunning()) Thread.sleep(ticketReleaseRate);
     }
 
     public void removeTicket(User user) throws InterruptedException {
         lock.lock();
+        if (!user.isRunning()) return;
         try {
             if (tickets.isEmpty()) {
                 String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
@@ -100,7 +102,17 @@ public class TicketPool {
         } finally {
             lock.unlock();
         }
-        Thread.sleep(customerRetrievalRate);
+        if (user.isRunning()) Thread.sleep(customerRetrievalRate);
+    }
+
+    public void stopAllWaiting() {
+        lock.lock();
+        try {
+            // Wake up all threads waiting on condition
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
     }
 
     private void sendTicketPoolUpdate(TicketEvent ticketEvent) {

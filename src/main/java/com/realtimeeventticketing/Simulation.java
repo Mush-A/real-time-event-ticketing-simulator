@@ -11,25 +11,17 @@ import java.util.concurrent.TimeUnit;
 public class Simulation {
     private final List<Vendor> vendors;
     private final List<Customer> customers;
-    private ExecutorService executorService;
+    private final ExecutorService executorService;
 
     public Simulation(List<Vendor> vendors, List<Customer> customers) {
         this.vendors = vendors;
         this.customers = customers;
+        this.executorService =  Executors.newFixedThreadPool(vendors.size() + customers.size());
     }
 
     public void run(int durationInSeconds) throws InterruptedException {
-        executorService = Executors.newFixedThreadPool(vendors.size() + customers.size());
-
-        // Submit the Vendor and Customer tasks to the ExecutorService
         vendors.forEach(executorService::submit);
         customers.forEach(executorService::submit);
-
-        System.out.println("Running the simulation for " + durationInSeconds + " seconds...");
-        Thread.sleep(durationInSeconds * 1000);
-
-        // Stop the simulation
-        stop();
     }
 
     public void stop() throws InterruptedException {

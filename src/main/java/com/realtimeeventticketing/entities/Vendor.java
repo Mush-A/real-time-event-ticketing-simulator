@@ -2,10 +2,9 @@ package com.realtimeeventticketing.entities;
 
 import com.realtimeeventticketing.TicketPool;
 
-public class Vendor extends User implements Runnable {
+public class Vendor extends User {
 
     private final TicketPool ticketPool;
-    private volatile boolean running = true;
 
     public Vendor(String name, TicketPool ticketPool) {
         super(0, name);
@@ -21,9 +20,5 @@ public class Vendor extends User implements Runnable {
                 e.printStackTrace();
             }
         }
-    }
-
-    public void stop() {
-        running = false;
     }
 }

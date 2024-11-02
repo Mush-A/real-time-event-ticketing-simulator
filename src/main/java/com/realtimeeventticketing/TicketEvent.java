@@ -24,10 +24,24 @@ public class TicketEvent {
     }
 
     // Getters and Setters
-    public EventType getEventType() { return eventType; }
-    public String getMessage() { return message; }
-    public String getCustomerName() { return customerName; }
-    public String getVendorName() { return vendorName; }
-    public Ticket getTicket() { return ticket; }
+    public EventType getEventType() {
+        return eventType;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public String getCustomerName() {
+        return customerName;
+    }
+
+    public String getVendorName() {
+        return vendorName;
+    }
+
+    public Ticket getTicket() {
+        return ticket;
+    }
 }
 
