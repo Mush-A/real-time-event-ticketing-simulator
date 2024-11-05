@@ -22,6 +22,10 @@ public class SimulationController {
     @PostMapping("/simulation/start")
     public String startSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
 
+        if (simulation != null && simulation.isRunning()) {
+            return "Simulation is already running.";
+        }
+
         // Build the configuration using the builder pattern
         ConfigurationBuilder configBuilder = new ConfigurationBuilder(null)
                 .setTotalTickets(request.getTotalTickets())
@@ -51,6 +55,15 @@ public class SimulationController {
             return "Simulation stopped.";
         } else {
             return "No simulation is running.";
+        }
+    }
+
+    @GetMapping("/simulation/status")
+    public String simulationStatus() {
+        if (simulation != null) {
+            return SimulationStatusType.RUNNING.name();
+        } else {
+            return SimulationStatusType.NOT_RUNNING.name();
         }
     }
 

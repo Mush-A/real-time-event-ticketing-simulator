@@ -1,7 +1,7 @@
 <div class="flex h-screen bg-gray-100 p-4 gap-4">
   <!-- Left Form Section -->
-  <div class="flex flex-col justify-between w-1/4 space-y-4">
-    <form [formGroup]="simulationForm" (ngSubmit)="onSubmit()" class="w-full space-y-4 bg-white shadow-lg rounded-lg p-6">
+  <div class="flex flex-col w-1/4 justify-around">
+    <form [formGroup]="simulationForm" (ngSubmit)="onSubmit()" class="w-full space-y-4 bg-white shadow-lg rounded-lg p-6 justify-center">
       <h2 class="text-xl font-semibold text-gray-800">Simulation Settings</h2>
 
       <div>
@@ -73,7 +73,6 @@
       <div class="flex space-x-4">
         <button
           type="submit"
-          [disabled]="!simulationForm.valid"
           class="flex-1 bg-blue-500 text-white py-1 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
         >
           Start Simulation
@@ -92,16 +91,17 @@
 
   <!-- Right Message Section -->
   <div class="flex flex-col w-1/2 flex-grow">
-    <div class="flex-grow bg-white shadow-lg rounded-lg p-4 overflow-hidden">
+    <div class="flex flex-col gap-4 bg-white shadow-lg rounded-lg p-4 overflow-hidden flex-1">
       <h2 class="text-xl font-semibold text-gray-800 mb-4">Messages</h2>
-      <div class="max-h-full overflow-y-scroll space-y-4 py-4">
+      <div class="flex flex-col flex-1 overflow-y-scroll space-y-4 py-4">
+
         <div
           *ngFor="let message of messages$ | async"
           [ngClass]="getMessageClass(message.eventType)"
           class="p-4 rounded transition duration-200 shadow-sm"
         >
           <div class="flex flex-col space-y-1">
-            <span class="text-lg font-bold">{{ message.eventType }}</span>
+            <span class="text-lg font-bold">{{ message.eventType.split("_").join(" ") }}</span>
 
             <!-- Optional fields with conditional rendering -->
             <ng-container *ngIf="message.customerName">
@@ -134,6 +134,17 @@
             </ng-container>
           </div>
         </div>
+
+        <div class="min-h-[200px]"></div>
+
+      </div>
+      <div>
+        <button
+          (click)="clearMessages()"
+          class="px-2 bg-red-500 text-white py-1 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200"
+        >
+          Clear Messages
+        </button>
       </div>
     </div>
   </div>
