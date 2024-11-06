@@ -41,7 +41,7 @@ public class TicketPool {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
                 System.out.println(message);
                 this.sendTicketPoolUpdate(new TicketEvent(
-                        EventType.POOL_FULL,
+                        TicketEventType.POOL_FULL,
                         message
                 ));
                 condition.await();
@@ -51,7 +51,7 @@ public class TicketPool {
                 String message = "Ticket added to the pool." + ticket;
                 System.out.println(message);
                 this.sendTicketPoolUpdate(new TicketEvent(
-                        EventType.TICKET_ADDED,
+                        TicketEventType.TICKET_ADDED,
                         message,
                         null,
                         user.getName(),
@@ -72,7 +72,7 @@ public class TicketPool {
                 String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
                 System.out.println(message);
                 this.sendTicketPoolUpdate(new TicketEvent(
-                        EventType.POOL_EMPTY,
+                        TicketEventType.POOL_EMPTY,
                         message
                 ));
                 condition.await();
@@ -81,7 +81,7 @@ public class TicketPool {
                 String message = "Ticket removed from the pool." + ticket;
                 System.out.println(message);
                 this.sendTicketPoolUpdate(new TicketEvent(
-                        EventType.TICKET_PURCHASED,
+                        TicketEventType.TICKET_PURCHASED,
                         message,
                         user.getName(),
                         null,

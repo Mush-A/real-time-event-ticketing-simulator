@@ -1,19 +1,19 @@
 package com.realtimeeventticketing.simulation;
 
 public class TicketEvent {
-    private final EventType eventType;
+    private final TicketEventType eventType;
     private final String message;
     private String customerName;
     private String vendorName;
     private Ticket ticket;
 
     // Constructor
-    public TicketEvent(EventType eventType, String message) {
+    public TicketEvent(TicketEventType eventType, String message) {
         this.eventType = eventType;
         this.message = message;
     }
 
-    public TicketEvent(EventType eventType, String message, String customerName, String vendorName, Ticket ticket) {
+    public TicketEvent(TicketEventType eventType, String message, String customerName, String vendorName, Ticket ticket) {
         this.eventType = eventType;
         this.message = message;
         this.customerName = customerName;
@@ -22,7 +22,7 @@ public class TicketEvent {
     }
 
     // Getters and Setters
-    public EventType getEventType() {
+    public TicketEventType getEventType() {
         return eventType;
     }
 

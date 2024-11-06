@@ -1,6 +1,6 @@
 package com.realtimeeventticketing.simulation;
 
-public enum EventType {
+public enum TicketEventType {
     TICKET_PURCHASED,
     TICKET_ADDED,
     POOL_EMPTY,
