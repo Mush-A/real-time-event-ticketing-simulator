@@ -1,10 +1,10 @@
 package com.realtimeeventticketing.cli;
 
-import com.realtimeeventticketing.ConfigurationBuilder;
-import com.realtimeeventticketing.Simulation;
-import com.realtimeeventticketing.TicketPool;
-import com.realtimeeventticketing.Customer;
-import com.realtimeeventticketing.Vendor;
+import com.realtimeeventticketing.simulation.ConfigurationBuilder;
+import com.realtimeeventticketing.simulation.Simulation;
+import com.realtimeeventticketing.simulation.TicketPool;
+import com.realtimeeventticketing.simulation.Customer;
+import com.realtimeeventticketing.simulation.Vendor;
 
 
 import java.util.List;

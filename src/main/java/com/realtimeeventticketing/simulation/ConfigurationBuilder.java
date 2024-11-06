@@ -1,4 +1,4 @@
-package com.realtimeeventticketing;
+package com.realtimeeventticketing.simulation;
 
 import com.realtimeeventticketing.cli.InputValidator;
 

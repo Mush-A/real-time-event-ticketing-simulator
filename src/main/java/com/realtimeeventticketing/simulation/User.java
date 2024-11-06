@@ -1,4 +1,4 @@
-package com.realtimeeventticketing;
+package com.realtimeeventticketing.simulation;
 
 public abstract class User implements Runnable {
     private final int id;

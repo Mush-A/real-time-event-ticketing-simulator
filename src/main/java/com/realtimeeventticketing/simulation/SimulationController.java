@@ -1,4 +1,4 @@
-package com.realtimeeventticketing;
+package com.realtimeeventticketing.simulation;
 
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;

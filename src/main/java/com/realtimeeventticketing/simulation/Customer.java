@@ -1,10 +1,10 @@
-package com.realtimeeventticketing;
+package com.realtimeeventticketing.simulation;
 
-public class Vendor extends User {
+public class Customer extends User {
 
     private final TicketPool ticketPool;
 
-    public Vendor(String name, TicketPool ticketPool, int rate) {
+    public Customer(String name, TicketPool ticketPool, int rate) {
         super(0, name, rate);
         this.ticketPool = ticketPool;
     }
@@ -13,8 +13,9 @@ public class Vendor extends User {
     public void run() {
         while (isRunning()) {
             try {
-                ticketPool.addTicket(this);
+                ticketPool.removeTicket(this);
                 Thread.sleep(getRate());
+
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

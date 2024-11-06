@@ -1,4 +1,4 @@
-package com.realtimeeventticketing;
+package com.realtimeeventticketing.simulation;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
