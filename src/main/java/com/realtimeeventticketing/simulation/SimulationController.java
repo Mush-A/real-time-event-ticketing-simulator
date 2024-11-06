@@ -25,7 +25,7 @@ public class SimulationController {
         }
 
         // Build the configuration using the builder pattern
-        ConfigurationBuilder configBuilder = new ConfigurationBuilder(null)
+        SimulationBuilder configBuilder = new SimulationBuilder()
                 .setTotalTickets(request.getTotalTickets())
                 .setTicketReleaseRate(request.getTicketReleaseRate())
                 .setCustomerRetrievalRate(request.getCustomerRetrievalRate())

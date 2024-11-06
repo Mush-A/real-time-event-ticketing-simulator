@@ -1,6 +1,6 @@
 package com.realtimeeventticketing.cli;
 
-import com.realtimeeventticketing.simulation.ConfigurationBuilder;
+import com.realtimeeventticketing.simulation.SimulationBuilder;
 import com.realtimeeventticketing.simulation.Simulation;
 import com.realtimeeventticketing.simulation.TicketPool;
 import com.realtimeeventticketing.simulation.Customer;
@@ -13,19 +13,19 @@ import java.util.Scanner;
 public class Main {
     public static void main(String[] args) throws InterruptedException {
         Scanner scanner = new Scanner(System.in);
+        UserInputHandler userInputHandler = new UserInputHandler(scanner);
 
-        // Build configuration using the builder pattern
-        ConfigurationBuilder configBuilder = new ConfigurationBuilder(scanner)
-                .setTotalTickets()
-                .setTicketReleaseRate()
-                .setCustomerRetrievalRate()
-                .setMaxTicketsCapacity()
-                .setNumVendors()
-                .setNumCustomers();
+        SimulationBuilder builder = new SimulationBuilder()
+                .setTotalTickets(userInputHandler.getTotalTickets())
+                .setTicketReleaseRate(userInputHandler.getTicketReleaseRate())
+                .setCustomerRetrievalRate(userInputHandler.getCustomerRetrievalRate())
+                .setMaxTicketsCapacity(userInputHandler.getMaxTicketsCapacity())
+                .setNumVendors(userInputHandler.getNumVendors())
+                .setNumCustomers(userInputHandler.getNumCustomers());
 
-        TicketPool ticketPool = configBuilder.buildTicketPool();
-        List<Vendor> vendors = configBuilder.buildVendors(ticketPool);
-        List<Customer> customers = configBuilder.buildCustomers(ticketPool);
+        TicketPool ticketPool = builder.buildTicketPool();
+        List<Vendor> vendors = builder.buildVendors(ticketPool);
+        List<Customer> customers = builder.buildCustomers(ticketPool);
 
         // Run the simulation
         Simulation simulationRunner = new Simulation(vendors, customers);
