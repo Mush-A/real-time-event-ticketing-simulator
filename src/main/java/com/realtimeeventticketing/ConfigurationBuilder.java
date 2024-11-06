@@ -1,8 +1,6 @@
 package com.realtimeeventticketing;
 
-import com.realtimeeventticketing.entities.Customer;
-import com.realtimeeventticketing.entities.Vendor;
-import com.realtimeeventticketing.util.InputValidator;
+import com.realtimeeventticketing.cli.InputValidator;
 
 import java.util.ArrayList;
 import java.util.List;

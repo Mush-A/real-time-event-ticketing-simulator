@@ -1,7 +1,5 @@
 package com.realtimeeventticketing;
 
-import com.realtimeeventticketing.entities.Customer;
-import com.realtimeeventticketing.entities.Vendor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 

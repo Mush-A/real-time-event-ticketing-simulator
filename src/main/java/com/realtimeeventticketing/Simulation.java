@@ -1,8 +1,5 @@
 package com.realtimeeventticketing;
 
-import com.realtimeeventticketing.entities.Customer;
-import com.realtimeeventticketing.entities.Vendor;
-
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

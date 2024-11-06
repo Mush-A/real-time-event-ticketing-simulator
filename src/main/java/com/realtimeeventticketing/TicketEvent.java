@@ -1,7 +1,5 @@
 package com.realtimeeventticketing;
 
-import com.realtimeeventticketing.entities.Ticket;
-
 public class TicketEvent {
     private final EventType eventType;
     private final String message;

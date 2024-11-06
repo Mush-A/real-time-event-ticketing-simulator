@@ -1,4 +1,4 @@
-package com.realtimeeventticketing.util;
+package com.realtimeeventticketing.cli;
 
 import java.util.Scanner;
 

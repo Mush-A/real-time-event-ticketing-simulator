@@ -1,8 +1,5 @@
 package com.realtimeeventticketing;
 
-import com.realtimeeventticketing.entities.Ticket;
-import com.realtimeeventticketing.entities.User;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
