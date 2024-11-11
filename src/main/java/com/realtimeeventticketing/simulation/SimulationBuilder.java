@@ -10,6 +10,8 @@ public class SimulationBuilder {
     private int maxTicketsCapacity;
     private int numVendors;
     private int numCustomers;
+    private TicketPool ticketPool;
+    private Simulation simulation;
 
     public SimulationBuilder setTotalTickets(int totalTickets) {
         this.totalTickets = totalTickets;
@@ -41,15 +43,17 @@ public class SimulationBuilder {
         return this;
     }
 
-    public TicketPool buildTicketPool() {
-        return new TicketPool(totalTickets, maxTicketsCapacity);
+    public SimulationBuilder buildTicketPool(SimulationController simulationController) {
+        this.ticketPool = new TicketPool(totalTickets, maxTicketsCapacity, simulationController);
+        return this;
     }
 
-    public TicketPool buildTicketPool(SimulationController simulationController) {
-        return new TicketPool(totalTickets, maxTicketsCapacity, simulationController);
+    public SimulationBuilder buildTicketPool() {
+        this.ticketPool = new TicketPool(totalTickets, maxTicketsCapacity);
+        return this;
     }
 
-    public List<Vendor> buildVendors(TicketPool ticketPool) {
+    private List<Vendor> buildVendors() {
         List<Vendor> vendors = new ArrayList<>();
         for (int i = 0; i < numVendors; i++) {
             vendors.add(new Vendor("Vendor " + (i + 1), ticketPool, this.ticketReleaseRate));
@@ -57,11 +61,35 @@ public class SimulationBuilder {
         return vendors;
     }
 
-    public List<Customer> buildCustomers(TicketPool ticketPool) {
+    private List<Customer> buildCustomers() {
         List<Customer> customers = new ArrayList<>();
         for (int i = 0; i < numCustomers; i++) {
             customers.add(new Customer("Customer " + (i + 1), ticketPool, this.customerRetrievalRate));
         }
         return customers;
+    }
+
+    public SimulationBuilder buildSimulation() {
+        List<Vendor> vendors = buildVendors();
+        List<Customer> customers = buildCustomers();
+        this.simulation = new Simulation(vendors, customers);
+        return this;
+    }
+
+    public void startSimulation() {
+        if (this.simulation != null) {
+            this.simulation.run();
+        }
+    }
+
+    public void stopSimulation() throws InterruptedException {
+        if (this.simulation != null) {
+            this.simulation.stop();
+            this.ticketPool.stopAllWaiting();
+        }
+    }
+
+    public boolean isSimulationRunning() {
+        return this.simulation != null && this.simulation.isRunning();
     }
 }

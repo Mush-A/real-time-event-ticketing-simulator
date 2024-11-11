@@ -3,15 +3,11 @@ package com.realtimeeventticketing.simulation;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 public class SimulationController {
 
-    private Simulation simulation;
-    private TicketPool ticketPool;
-
     private final SimpMessagingTemplate messagingTemplate;
+    private SimulationBuilder simulationBuilder;
 
     public SimulationController(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
@@ -19,37 +15,29 @@ public class SimulationController {
 
     @PostMapping("/simulation/start")
     public String startSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
-
-        if (simulation != null && simulation.isRunning()) {
+        if (simulationBuilder != null && simulationBuilder.isSimulationRunning()) {
             return "Simulation is already running.";
         }
 
-        // Build the configuration using the builder pattern
-        SimulationBuilder configBuilder = new SimulationBuilder()
+        // Build the simulation using the builder pattern
+        simulationBuilder = new SimulationBuilder()
                 .setTotalTickets(request.getTotalTickets())
                 .setTicketReleaseRate(request.getTicketReleaseRate())
                 .setCustomerRetrievalRate(request.getCustomerRetrievalRate())
                 .setMaxTicketsCapacity(request.getMaxTicketsCapacity())
                 .setNumVendors(request.getNumVendors())
-                .setNumCustomers(request.getNumCustomers());
+                .setNumCustomers(request.getNumCustomers())
+                .buildTicketPool(this)
+                .buildSimulation();
 
-        // Create TicketPool, Vendors, and Customers
-        ticketPool = configBuilder.buildTicketPool(this);
-        List<Vendor> vendors = configBuilder.buildVendors(ticketPool);
-        List<Customer> customers = configBuilder.buildCustomers(ticketPool);
-
-        simulation = new Simulation(vendors, customers);
-        simulation.run();
-
+        simulationBuilder.startSimulation();
         return "Simulation started";
     }
 
-
     @PostMapping("/simulation/stop")
     public String stopSimulation() throws InterruptedException {
-        if (simulation != null) {
-            simulation.stop();
-            ticketPool.stopAllWaiting();
+        if (simulationBuilder != null) {
+            simulationBuilder.stopSimulation();
             return "Simulation stopped.";
         } else {
             return "No simulation is running.";
@@ -58,7 +46,7 @@ public class SimulationController {
 
     @GetMapping("/simulation/status")
     public String simulationStatus() {
-        if (simulation != null) {
+        if (simulationBuilder != null && simulationBuilder.isSimulationRunning()) {
             return SimulationStatusType.RUNNING.name();
         } else {
             return SimulationStatusType.NOT_RUNNING.name();

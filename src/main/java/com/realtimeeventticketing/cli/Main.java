@@ -21,15 +21,9 @@ public class Main {
                 .setCustomerRetrievalRate(userInputHandler.getCustomerRetrievalRate())
                 .setMaxTicketsCapacity(userInputHandler.getMaxTicketsCapacity())
                 .setNumVendors(userInputHandler.getNumVendors())
-                .setNumCustomers(userInputHandler.getNumCustomers());
-
-        TicketPool ticketPool = builder.buildTicketPool();
-        List<Vendor> vendors = builder.buildVendors(ticketPool);
-        List<Customer> customers = builder.buildCustomers(ticketPool);
-
-        // Run the simulation
-        Simulation simulationRunner = new Simulation(vendors, customers);
-        simulationRunner.run();
+                .setNumCustomers(userInputHandler.getNumCustomers())
+                .buildTicketPool()
+                .buildSimulation();
 
         System.out.println("All threads have finished execution.");
     }
