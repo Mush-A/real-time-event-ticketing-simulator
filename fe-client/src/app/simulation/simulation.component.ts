@@ -73,9 +73,23 @@ export class SimulationComponent implements OnInit {
       .subscribe({
         next: (response: string) => {
           console.log('Simulation stopped: ' + response);
+          this.setIsSimulationRunning();
         },
         error: (error) => {
           console.error('Error stopping simulation: ' + error);
+        }
+      });
+  }
+
+  updateSimulation() {
+    // Send a POST request to update the simulation
+    this.http.put('api/simulation/update', this.simulationForm.value, { responseType: 'text' })
+      .subscribe({
+        next: (response: string) => {
+          console.log('Simulation updated: ' + response);
+        },
+        error: (error) => {
+          console.error('Error updating simulation: ' + error);
         }
       });
   }
@@ -94,9 +108,10 @@ export class SimulationComponent implements OnInit {
     this.getSimulationStatus().subscribe({
       next: (status: SimulationStatusType) => {
         this.isSimulationRunning = status === SimulationStatusType.RUNNING;
+        console.log('Simulation status: ' + status);
       },
       error: (error) => {
-        console.error('Error getting simulation status: ' + error);
+        console.error('Error getting simulation status: ' + JSON.stringify(error));
       }
     })
   }

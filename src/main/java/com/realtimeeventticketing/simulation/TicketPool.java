@@ -8,11 +8,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TicketPool {
-    private final int totalTickets;
-    private final int maxTicketsCapacity;
     private final List<Ticket> tickets;
     private final Lock lock;
     private final Condition condition;
+
+    private final int totalTickets;
+    private int maxTicketsCapacity;
 
     private SimulationController simulationController = null;
 
@@ -107,6 +108,26 @@ public class TicketPool {
     private void sendTicketPoolUpdate(TicketEvent ticketEvent) {
         if (simulationController != null) {
             simulationController.sendSimulationUpdate(ticketEvent);
+        }
+    }
+
+    public void setMaxTicketsCapacity(int maxTicketsCapacity) {
+        lock.lock();
+        try {
+            this.maxTicketsCapacity = maxTicketsCapacity;
+            condition.signalAll(); // Notify all waiting threads in case the new capacity allows for more tickets
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void setTotalTickets(int totalTickets) {
+        lock.lock();
+        try {
+            this.maxTicketsCapacity = totalTickets;
+            condition.signalAll();
+        } finally {
+            lock.unlock();
         }
     }
 }

@@ -53,7 +53,7 @@ public class SimulationBuilder {
         return this;
     }
 
-    private List<Vendor> buildVendors() {
+    private List<Vendor> buildVendors(int numVendors) {
         List<Vendor> vendors = new ArrayList<>();
         for (int i = 0; i < numVendors; i++) {
             vendors.add(new Vendor("Vendor " + (i + 1), ticketPool, this.ticketReleaseRate));
@@ -61,7 +61,7 @@ public class SimulationBuilder {
         return vendors;
     }
 
-    private List<Customer> buildCustomers() {
+    private List<Customer> buildCustomers(int numCustomers) {
         List<Customer> customers = new ArrayList<>();
         for (int i = 0; i < numCustomers; i++) {
             customers.add(new Customer("Customer " + (i + 1), ticketPool, this.customerRetrievalRate));
@@ -70,8 +70,8 @@ public class SimulationBuilder {
     }
 
     public SimulationBuilder buildSimulation() {
-        List<Vendor> vendors = buildVendors();
-        List<Customer> customers = buildCustomers();
+        List<Vendor> vendors = buildVendors(this.numVendors);
+        List<Customer> customers = buildCustomers(this.numCustomers);
         this.simulation = new Simulation(vendors, customers);
         return this;
     }
@@ -91,5 +91,38 @@ public class SimulationBuilder {
 
     public boolean isSimulationRunning() {
         return this.simulation != null && this.simulation.isRunning();
+    }
+
+    public SimulationBuilder updateSimulation(SimulationRequest updateRequest) {
+        this.totalTickets = updateRequest.getTotalTickets();
+        this.ticketReleaseRate = updateRequest.getTicketReleaseRate();
+        this.customerRetrievalRate = updateRequest.getCustomerRetrievalRate();
+        this.maxTicketsCapacity = updateRequest.getMaxTicketsCapacity();
+        this.numVendors = updateRequest.getNumVendors();
+        this.numCustomers = updateRequest.getNumCustomers();
+
+        this.ticketPool.setTotalTickets(this.totalTickets);
+        this.ticketPool.setMaxTicketsCapacity(this.maxTicketsCapacity);
+
+        this.simulation.setVendorReleaseRate(this.ticketReleaseRate);
+        this.simulation.setCustomerRetrievalRate(this.customerRetrievalRate);
+
+        if (this.simulation.getCustomers().size() > this.numCustomers) {
+            this.simulation.removeCustomers(this.simulation.getCustomers().size() - this.numCustomers);
+        } else if (this.simulation.getCustomers().size() < this.numCustomers) {
+            int numOfNewCustomers = this.numCustomers - this.simulation.getCustomers().size();
+            List<Customer> newCustomers = this.buildCustomers(numOfNewCustomers);
+            this.simulation.addCustomers(newCustomers);
+        }
+
+        if (this.simulation.getVendors().size() > this.numVendors) {
+            this.simulation.removeVendors(this.simulation.getVendors().size() - this.numVendors);
+        } else if (this.simulation.getVendors().size() < this.numVendors) {
+            int numOfNewVendors = this.numVendors - this.simulation.getVendors().size();
+            List<Vendor> newVendors = this.buildVendors(numOfNewVendors);
+            this.simulation.addVendors(newVendors);
+        }
+
+        return this;
     }
 }

@@ -45,11 +45,21 @@ public class SimulationController {
     }
 
     @GetMapping("/simulation/status")
-    public String simulationStatus() {
+    public SimulationStatusType simulationStatus() {
         if (simulationBuilder != null && simulationBuilder.isSimulationRunning()) {
-            return SimulationStatusType.RUNNING.name();
+            return SimulationStatusType.RUNNING;
         } else {
-            return SimulationStatusType.NOT_RUNNING.name();
+            return SimulationStatusType.NOT_RUNNING;
+        }
+    }
+
+    @PutMapping("/simulation/update")
+    public String updateSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
+        if (simulationBuilder != null) {
+            simulationBuilder.updateSimulation(request);
+            return "Simulation updated.";
+        } else {
+            return "No simulation is running.";
         }
     }
 

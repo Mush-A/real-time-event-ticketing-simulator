@@ -1,5 +1,5 @@
 export enum SimulationStatusType {
-  RUNNING,
-  NOT_RUNNING,
-  NO_SIMULATION
+  RUNNING = 'RUNNING',
+  NOT_RUNNING = 'NOT_RUNNING',
+  NO_SIMULATION = 'NO_SIMULATION'
 }

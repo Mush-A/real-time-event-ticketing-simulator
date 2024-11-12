@@ -3,7 +3,7 @@ package com.realtimeeventticketing.simulation;
 public abstract class User implements Runnable {
     private final int id;
     private final String name;
-    private final int rate;
+    private int rate;
     private volatile boolean running = true;
 
     protected User(int id, String name, int rate) {
@@ -30,6 +30,10 @@ public abstract class User implements Runnable {
 
     public int getRate() {
         return rate;
+    }
+
+    public void setRate(int rate) {
+        this.rate = rate;
     }
 
     @Override

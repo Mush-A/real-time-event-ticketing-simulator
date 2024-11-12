@@ -72,10 +72,20 @@
 
       <div class="flex space-x-4">
         <button
+          *ngIf="!isSimulationRunning"
           type="submit"
           class="flex-1 bg-blue-500 text-white py-1 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
         >
           Start Simulation
+        </button>
+
+        <button
+          *ngIf="isSimulationRunning"
+          type="button"
+          class="flex-1 bg-yellow-500 text-white py-1 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-200"
+          (click)="updateSimulation()"
+        >
+          Update Simulation
         </button>
 
         <button
