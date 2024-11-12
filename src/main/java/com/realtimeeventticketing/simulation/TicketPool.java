@@ -102,6 +102,7 @@ public class TicketPool {
             condition.signalAll();
         } finally {
             lock.unlock();
+            Ticket.resetId();
         }
     }
 

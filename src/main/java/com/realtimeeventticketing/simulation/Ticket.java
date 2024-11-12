@@ -23,6 +23,10 @@ public class Ticket {
         return id;
     }
 
+    public static void resetId() {
+        sequence = 0;
+    }
+
     public TicketStatus getStatus() {
         return status;
     }

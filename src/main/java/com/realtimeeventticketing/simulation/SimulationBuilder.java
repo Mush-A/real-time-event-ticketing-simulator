@@ -56,7 +56,7 @@ public class SimulationBuilder {
     private List<Vendor> buildVendors(int numVendors) {
         List<Vendor> vendors = new ArrayList<>();
         for (int i = 0; i < numVendors; i++) {
-            vendors.add(new Vendor("Vendor " + (i + 1), ticketPool, this.ticketReleaseRate));
+            vendors.add(new Vendor("Vendor ", ticketPool, this.ticketReleaseRate));
         }
         return vendors;
     }
@@ -64,7 +64,7 @@ public class SimulationBuilder {
     private List<Customer> buildCustomers(int numCustomers) {
         List<Customer> customers = new ArrayList<>();
         for (int i = 0; i < numCustomers; i++) {
-            customers.add(new Customer("Customer " + (i + 1), ticketPool, this.customerRetrievalRate));
+            customers.add(new Customer("Customer ", ticketPool, this.customerRetrievalRate));
         }
         return customers;
     }
@@ -86,6 +86,8 @@ public class SimulationBuilder {
         if (this.simulation != null) {
             this.simulation.stop();
             this.ticketPool.stopAllWaiting();
+            Customer.resetId();
+            Vendor.resetId();
         }
     }
 
