@@ -66,4 +66,14 @@ public class SimulationController {
     public void sendSimulationUpdate(TicketEvent ticketEvent) {
         messagingTemplate.convertAndSend("/topic/simulation", ticketEvent);
     }
+
+    public void stopSimulationNow() {
+        try {
+            if (simulationBuilder != null) {
+                simulationBuilder.stopSimulation();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 }

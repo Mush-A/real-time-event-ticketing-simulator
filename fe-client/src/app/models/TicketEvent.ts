@@ -5,6 +5,7 @@ export enum EventType {
   TICKET_PURCHASED = 'TICKET_PURCHASED',
   POOL_FULL = 'POOL_FULL',
   POOL_EMPTY = 'POOL_EMPTY',
+  SIMULATION_OVER = 'SIMULATION_OVER'
 }
 
 export interface TicketEvent {

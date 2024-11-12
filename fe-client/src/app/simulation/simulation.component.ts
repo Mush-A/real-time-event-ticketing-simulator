@@ -26,10 +26,10 @@ export class SimulationComponent implements OnInit {
   constructor(private fb: FormBuilder, private http: HttpClient, private ws: WebSocketService) {
     // Initialize the form group with validators
     this.simulationForm = this.fb.group({
-      totalTickets: [1000, Validators.required],
-      ticketReleaseRate: [1000, Validators.required],
-      customerRetrievalRate: [1000, Validators.required],
-      maxTicketsCapacity: [1000, Validators.required],
+      totalTickets: [100, Validators.required],
+      ticketReleaseRate: [500, Validators.required],
+      customerRetrievalRate: [500, Validators.required],
+      maxTicketsCapacity: [100, Validators.required],
       numVendors: [1, Validators.required],
       numCustomers: [1, Validators.required],
     });
@@ -39,6 +39,11 @@ export class SimulationComponent implements OnInit {
       next: (update) => {
         // Push new messages to the BehaviorSubject
         this.messagesSubject.next([...this.messagesSubject.value, update]);
+
+        if (update.eventType === EventType.SIMULATION_OVER) {
+          // If the simulation is over, check the current simulation status
+          this.setIsSimulationRunning();
+        }
       },
       error: (error) => {
         console.error('Error receiving WebSocket update: ' + error);

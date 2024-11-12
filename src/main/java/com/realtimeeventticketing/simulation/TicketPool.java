@@ -11,9 +11,9 @@ public class TicketPool {
     private final List<Ticket> tickets;
     private final Lock lock;
     private final Condition condition;
-
     private final int totalTickets;
     private int maxTicketsCapacity;
+    private int soldTicketsCount = 0; // New field to track sold tickets
 
     private SimulationController simulationController = null;
 
@@ -26,12 +26,8 @@ public class TicketPool {
     }
 
     public TicketPool(int totalTickets, int maxTicketsCapacity, SimulationController simulationController) {
-        this.totalTickets = totalTickets;
-        this.maxTicketsCapacity = maxTicketsCapacity;
+        this(totalTickets, maxTicketsCapacity);
         this.simulationController = simulationController;
-        this.tickets = Collections.synchronizedList(new ArrayList<>());
-        this.lock = new ReentrantLock();
-        this.condition = lock.newCondition();
     }
 
     public void addTicket(User user) throws InterruptedException {
@@ -79,6 +75,7 @@ public class TicketPool {
                 condition.await();
             } else {
                 Ticket ticket = tickets.remove(0).buyTicket();
+                soldTicketsCount++; // Increment the sold tickets count
                 String message = "Ticket removed from the pool." + ticket;
                 System.out.println(message);
                 this.sendTicketPoolUpdate(new TicketEvent(
@@ -89,6 +86,16 @@ public class TicketPool {
                         ticket
                 ));
                 condition.signalAll();
+
+                if (soldTicketsCount >= totalTickets) {
+                    String simulationOverMessage = "All tickets have been sold. Simulation is over.";
+                    System.out.println(simulationOverMessage);
+                    this.sendTicketPoolUpdate(new TicketEvent(
+                            TicketEventType.SIMULATION_OVER,
+                            simulationOverMessage
+                    ));
+                    simulationController.stopSimulationNow(); // Notify the controller to stop the simulation
+                }
             }
         } finally {
             lock.unlock();
