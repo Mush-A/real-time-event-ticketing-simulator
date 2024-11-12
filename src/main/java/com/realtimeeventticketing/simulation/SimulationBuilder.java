@@ -107,18 +107,20 @@ public class SimulationBuilder {
         this.simulation.setVendorReleaseRate(this.ticketReleaseRate);
         this.simulation.setCustomerRetrievalRate(this.customerRetrievalRate);
 
-        if (this.simulation.getCustomers().size() > this.numCustomers) {
-            this.simulation.removeCustomers(this.simulation.getCustomers().size() - this.numCustomers);
-        } else if (this.simulation.getCustomers().size() < this.numCustomers) {
-            int numOfNewCustomers = this.numCustomers - this.simulation.getCustomers().size();
+        int currentCustomers = this.simulation.getCustomers().size();
+        if (currentCustomers > this.numCustomers) {
+            this.simulation.removeCustomers(currentCustomers - this.numCustomers);
+        } else if (currentCustomers < this.numCustomers) {
+            int numOfNewCustomers = this.numCustomers - currentCustomers;
             List<Customer> newCustomers = this.buildCustomers(numOfNewCustomers);
             this.simulation.addCustomers(newCustomers);
         }
 
-        if (this.simulation.getVendors().size() > this.numVendors) {
-            this.simulation.removeVendors(this.simulation.getVendors().size() - this.numVendors);
-        } else if (this.simulation.getVendors().size() < this.numVendors) {
-            int numOfNewVendors = this.numVendors - this.simulation.getVendors().size();
+        int currentVendors = this.simulation.getVendors().size();
+        if (currentVendors > this.numVendors) {
+            this.simulation.removeVendors(currentVendors - this.numVendors);
+        } else if (currentVendors < this.numVendors) {
+            int numOfNewVendors = this.numVendors - currentVendors;
             List<Vendor> newVendors = this.buildVendors(numOfNewVendors);
             this.simulation.addVendors(newVendors);
         }

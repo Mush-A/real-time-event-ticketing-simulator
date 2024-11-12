@@ -18,7 +18,7 @@ public class Simulation {
     public Simulation(List<Vendor> vendors, List<Customer> customers) {
         this.vendors = new ArrayList<>(vendors);
         this.customers = new ArrayList<>(customers);
-        this.executorService = Executors.newFixedThreadPool(vendors.size() + customers.size());
+        this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
     public void run() {
@@ -72,7 +72,6 @@ public class Simulation {
         return !executorService.isShutdown();
     }
 
-
     public void addCustomers(List<Customer> customers) {
         customerLock.lock();
         try {
@@ -101,42 +100,40 @@ public class Simulation {
         }
     }
 
-    public void removeCustomers(int customers) {
+    public void removeCustomers(int customersToRemove) {
         customerLock.lock();
         try {
-            // Stop and discard the first n customers
-            for (int i = 0; i < customers; i++) {
-                this.customers.get(i).stop();
+            int currentSize = this.customers.size();
+            int removeCount = Math.min(customersToRemove, currentSize);
+            for (int i = 0; i < removeCount; i++) {
+                Customer customer = this.customers.remove(0);
+                customer.stop();
             }
-
-            // Remove the first n customers
-            this.customers.subList(0, customers).clear();
         } finally {
             customerLock.unlock();
         }
     }
 
-    public void removeVendors(int vendors) {
+    public void removeVendors(int vendorsToRemove) {
         vendorLock.lock();
         try {
-            // Stop and discard the first n vendors
-            for (int i = 0; i < vendors; i++) {
-                this.vendors.get(i).stop();
+            int currentSize = this.vendors.size();
+            int removeCount = Math.min(vendorsToRemove, currentSize);
+            for (int i = 0; i < removeCount; i++) {
+                Vendor vendor = this.vendors.remove(0);
+                vendor.stop();
             }
-
-            // Remove the first n vendors
-            this.vendors.subList(0, vendors).clear();
         } finally {
             vendorLock.unlock();
         }
     }
 
-    public List<Customer> getCustomers(){
-        return this.customers;
+    public List<Customer> getCustomers() {
+        return new ArrayList<>(this.customers);
     }
 
-    public List<Vendor> getVendors(){
-        return this.vendors;
+    public List<Vendor> getVendors() {
+        return new ArrayList<>(this.vendors);
     }
 
     public void setCustomerRetrievalRate(int rate) {
