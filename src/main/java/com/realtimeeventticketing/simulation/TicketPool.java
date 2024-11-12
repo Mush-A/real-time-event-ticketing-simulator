@@ -11,7 +11,7 @@ public class TicketPool {
     private final List<Ticket> tickets;
     private final Lock lock;
     private final Condition condition;
-    private final int totalTickets;
+    private int totalTickets;
     private int maxTicketsCapacity;
     private int soldTicketsCount = 0; // New field to track sold tickets
 
@@ -132,7 +132,7 @@ public class TicketPool {
     public void setTotalTickets(int totalTickets) {
         lock.lock();
         try {
-            this.maxTicketsCapacity = totalTickets;
+            this.totalTickets = totalTickets;
             condition.signalAll();
         } finally {
             lock.unlock();
