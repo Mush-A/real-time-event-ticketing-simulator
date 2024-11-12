@@ -54,7 +54,7 @@ public class SimulationController {
     }
 
     @PutMapping("/simulation/update")
-    public String updateSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
+    public String updateSimulation(@RequestBody SimulationRequest request) {
         if (simulationBuilder != null) {
             simulationBuilder.updateSimulation(request);
             return "Simulation updated.";
