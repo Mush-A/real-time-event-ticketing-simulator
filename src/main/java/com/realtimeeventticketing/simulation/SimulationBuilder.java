@@ -49,11 +49,6 @@ public class SimulationBuilder {
         return this;
     }
 
-    public SimulationBuilder buildTicketPool() {
-        this.ticketPool = new TicketPool(totalTickets, maxTicketsCapacity);
-        return this;
-    }
-
     private List<Vendor> buildVendors(int numVendors) {
         List<Vendor> vendors = new ArrayList<>();
         for (int i = 0; i < numVendors; i++) {
