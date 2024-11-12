@@ -43,8 +43,9 @@ public class SimulationBuilder {
         return this;
     }
 
-    public SimulationBuilder buildTicketPool(SimulationController simulationController) {
-        this.ticketPool = new TicketPool(totalTickets, maxTicketsCapacity, simulationController);
+    public SimulationBuilder buildTicketPool(ITicketPoolObserver observer) {
+        this.ticketPool = new TicketPool(totalTickets, maxTicketsCapacity);
+        this.ticketPool.addObserver(observer); // Register observer
         return this;
     }
 

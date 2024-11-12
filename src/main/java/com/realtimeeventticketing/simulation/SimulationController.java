@@ -4,7 +4,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class SimulationController {
+public class SimulationController implements ITicketPoolObserver {
 
     private final SimpMessagingTemplate messagingTemplate;
     private SimulationBuilder simulationBuilder;
@@ -63,7 +63,17 @@ public class SimulationController {
         }
     }
 
+    @Override
+    public void onTicketEvent(TicketEvent ticketEvent) throws InterruptedException {
+        sendSimulationUpdate(ticketEvent);
+
+        if (ticketEvent.getEventType() == TicketEventType.SIMULATION_OVER) {
+            stopSimulation();
+        }
+    }
+
     public void sendSimulationUpdate(TicketEvent ticketEvent) {
         messagingTemplate.convertAndSend("/topic/simulation", ticketEvent);
     }
+
 }

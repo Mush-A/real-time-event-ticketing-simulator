@@ -13,9 +13,23 @@ public class TicketPool {
     private final Condition condition;
     private int totalTickets;
     private int maxTicketsCapacity;
-    private int soldTicketsCount = 0; // New field to track sold tickets
+    private int soldTicketsCount = 0;
 
-    private SimulationController simulationController = null;
+    private final List<ITicketPoolObserver> observers;
+
+    public void addObserver(ITicketPoolObserver observer) {
+        observers.add(observer);
+    }
+
+    public void removeObserver(ITicketPoolObserver observer) {
+        observers.remove(observer);
+    }
+
+    private void notifyObservers(TicketEvent event) throws InterruptedException {
+        for (ITicketPoolObserver observer : observers) {
+            observer.onTicketEvent(event);
+        }
+    }
 
     public TicketPool(int totalTickets, int maxTicketsCapacity) {
         this.totalTickets = totalTickets;
@@ -23,11 +37,7 @@ public class TicketPool {
         this.tickets = Collections.synchronizedList(new ArrayList<>());
         this.lock = new ReentrantLock();
         this.condition = lock.newCondition();
-    }
-
-    public TicketPool(int totalTickets, int maxTicketsCapacity, SimulationController simulationController) {
-        this(totalTickets, maxTicketsCapacity);
-        this.simulationController = simulationController;
+        this.observers = new ArrayList<>();
     }
 
     public void addTicket(User user) throws InterruptedException {
@@ -37,7 +47,7 @@ public class TicketPool {
             if (tickets.size() == maxTicketsCapacity) {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
                 System.out.println(message);
-                this.sendTicketPoolUpdate(new TicketEvent(
+                this.notifyObservers(new TicketEvent(
                         TicketEventType.POOL_FULL,
                         message
                 ));
@@ -47,7 +57,7 @@ public class TicketPool {
                 tickets.add(ticket);
                 String message = "Ticket added to the pool." + ticket;
                 System.out.println(message);
-                this.sendTicketPoolUpdate(new TicketEvent(
+                this.notifyObservers(new TicketEvent(
                         TicketEventType.TICKET_ADDED,
                         message,
                         null,
@@ -68,7 +78,7 @@ public class TicketPool {
             if (tickets.isEmpty()) {
                 String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
                 System.out.println(message);
-                this.sendTicketPoolUpdate(new TicketEvent(
+                this.notifyObservers(new TicketEvent(
                         TicketEventType.POOL_EMPTY,
                         message
                 ));
@@ -78,7 +88,7 @@ public class TicketPool {
                 soldTicketsCount++; // Increment the sold tickets count
                 String message = "Ticket removed from the pool." + ticket;
                 System.out.println(message);
-                this.sendTicketPoolUpdate(new TicketEvent(
+                this.notifyObservers(new TicketEvent(
                         TicketEventType.TICKET_PURCHASED,
                         message,
                         user.getName(),
@@ -90,11 +100,10 @@ public class TicketPool {
                 if (soldTicketsCount >= totalTickets) {
                     String simulationOverMessage = "All tickets have been sold. Simulation is over.";
                     System.out.println(simulationOverMessage);
-                    this.sendTicketPoolUpdate(new TicketEvent(
+                    this.notifyObservers(new TicketEvent(
                             TicketEventType.SIMULATION_OVER,
                             simulationOverMessage
                     ));
-                    simulationController.stopSimulation(); // Notify the controller to stop the simulation
                 }
             }
         } finally {
@@ -110,12 +119,6 @@ public class TicketPool {
         } finally {
             lock.unlock();
             Ticket.resetId();
-        }
-    }
-
-    private void sendTicketPoolUpdate(TicketEvent ticketEvent) {
-        if (simulationController != null) {
-            simulationController.sendSimulationUpdate(ticketEvent);
         }
     }
 
