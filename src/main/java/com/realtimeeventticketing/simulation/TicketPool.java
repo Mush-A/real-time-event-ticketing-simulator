@@ -94,7 +94,7 @@ public class TicketPool {
                             TicketEventType.SIMULATION_OVER,
                             simulationOverMessage
                     ));
-                    simulationController.stopSimulationNow(); // Notify the controller to stop the simulation
+                    simulationController.stopSimulation(); // Notify the controller to stop the simulation
                 }
             }
         } finally {
