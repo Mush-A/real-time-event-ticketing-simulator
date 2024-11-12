@@ -95,7 +95,7 @@ public class SimulationBuilder {
         return this.simulation != null && this.simulation.isRunning();
     }
 
-    public SimulationBuilder updateSimulation(SimulationRequest updateRequest) {
+    public void updateSimulation(SimulationRequest updateRequest) {
         this.totalTickets = updateRequest.getTotalTickets();
         this.ticketReleaseRate = updateRequest.getTicketReleaseRate();
         this.customerRetrievalRate = updateRequest.getCustomerRetrievalRate();
@@ -126,7 +126,5 @@ public class SimulationBuilder {
             List<Vendor> newVendors = this.buildVendors(numOfNewVendors);
             this.simulation.addVendors(newVendors);
         }
-
-        return this;
     }
 }
