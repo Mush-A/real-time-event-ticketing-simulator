@@ -114,17 +114,10 @@
             <span class="text-lg font-bold">{{ message.eventType.split("_").join(" ") }}</span>
 
             <!-- Optional fields with conditional rendering -->
-            <ng-container *ngIf="message.customerName">
+            <ng-container *ngIf="message.user">
               <div class="flex gap-2">
                 <span class="font-bold text-gray-600">Customer Name: </span>
-                <span class="text-gray-800">{{ message.customerName }}</span>
-              </div>
-            </ng-container>
-
-            <ng-container *ngIf="message.vendorName">
-              <div class="flex gap-2">
-                <span class="font-bold text-gray-600">Vendor Name:</span>
-                <span class="text-gray-800">{{ message.vendorName }}</span>
+                <span class="text-gray-800">{{ message.user.name }}</span>
               </div>
             </ng-container>
 

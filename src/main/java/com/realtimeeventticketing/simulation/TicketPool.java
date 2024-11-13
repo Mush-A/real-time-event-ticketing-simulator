@@ -40,10 +40,11 @@ public class TicketPool {
         this.observers = new ArrayList<>();
     }
 
-    public void addTicket(User user) throws InterruptedException {
+    public Ticket addTicket(User user) throws InterruptedException {
         lock.lock();
+        Ticket ticket = null;
         try {
-            if (!user.isRunning()) return;
+            if (!user.isRunning()) return null;
             if (tickets.size() == maxTicketsCapacity) {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
                 System.out.println(message);
@@ -53,15 +54,14 @@ public class TicketPool {
                 ));
                 condition.await();
             } else {
-                Ticket ticket = new Ticket(100);
+                ticket = new Ticket(100);
                 tickets.add(ticket);
                 String message = "Ticket added to the pool." + ticket;
                 System.out.println(message);
                 this.notifyObservers(new TicketEvent(
                         TicketEventType.TICKET_ADDED,
                         message,
-                        null,
-                        user.getName(),
+                        user,
                         ticket
                 ));
                 condition.signalAll();
@@ -69,11 +69,13 @@ public class TicketPool {
         } finally {
             lock.unlock();
         }
+        return ticket;
     }
 
-    public void removeTicket(User user) throws InterruptedException {
+    public Ticket removeTicket(User user) throws InterruptedException {
         lock.lock();
-        if (!user.isRunning()) return;
+        Ticket ticket = null;
+        if (!user.isRunning()) return null;
         try {
             if (tickets.isEmpty()) {
                 String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
@@ -84,15 +86,14 @@ public class TicketPool {
                 ));
                 condition.await();
             } else {
-                Ticket ticket = tickets.remove(0).buyTicket();
+                ticket = tickets.remove(0).buyTicket();
                 soldTicketsCount++; // Increment the sold tickets count
                 String message = "Ticket removed from the pool." + ticket;
                 System.out.println(message);
                 this.notifyObservers(new TicketEvent(
                         TicketEventType.TICKET_PURCHASED,
                         message,
-                        user.getName(),
-                        null,
+                        user,
                         ticket
                 ));
                 condition.signalAll();
@@ -109,6 +110,7 @@ public class TicketPool {
         } finally {
             lock.unlock();
         }
+        return ticket;
     }
 
     public void stopAllWaiting() {

@@ -37,6 +37,7 @@ export class SimulationComponent implements OnInit {
     // Subscribe to the WebSocket service to receive updates
     this.ws.getSimulationUpdates().subscribe({
       next: (update) => {
+        console.log('WebSocket update received: ' + JSON.stringify(update));
         // Push new messages to the BehaviorSubject
         this.messagesSubject.next([...this.messagesSubject.value, update]);
 

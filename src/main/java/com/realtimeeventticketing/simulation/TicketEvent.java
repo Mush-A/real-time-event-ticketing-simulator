@@ -3,8 +3,7 @@ package com.realtimeeventticketing.simulation;
 public class TicketEvent {
     private final TicketEventType eventType;
     private final String message;
-    private String customerName;
-    private String vendorName;
+    private User user;
     private Ticket ticket;
 
     // Constructor
@@ -13,11 +12,10 @@ public class TicketEvent {
         this.message = message;
     }
 
-    public TicketEvent(TicketEventType eventType, String message, String customerName, String vendorName, Ticket ticket) {
+    public TicketEvent(TicketEventType eventType, String message, User user, Ticket ticket) {
         this.eventType = eventType;
         this.message = message;
-        this.customerName = customerName;
-        this.vendorName = vendorName;
+        this.user = user;
         this.ticket = ticket;
     }
 
@@ -30,12 +28,8 @@ public class TicketEvent {
         return message;
     }
 
-    public String getCustomerName() {
-        return customerName;
-    }
-
-    public String getVendorName() {
-        return vendorName;
+    public User getUser() {
+        return user;
     }
 
     public Ticket getTicket() {

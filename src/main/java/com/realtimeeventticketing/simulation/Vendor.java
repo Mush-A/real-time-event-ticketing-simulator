@@ -15,7 +15,7 @@ public class Vendor extends User {
     public void run() {
         while (isRunning()) {
             try {
-                ticketPool.addTicket(this);
+                this.addTicket(ticketPool.addTicket(this));
                 Thread.sleep(getRate());
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);

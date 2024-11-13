@@ -1,4 +1,5 @@
 import { Ticket } from './Ticket';
+import {User} from './User';
 
 export enum EventType {
   TICKET_ADDED = 'TICKET_ADDED',
@@ -11,7 +12,6 @@ export enum EventType {
 export interface TicketEvent {
   eventType: EventType;
   message: string;
-  customerName?: string;
-  vendorName?: string;
+  user?: User;
   ticket?: Ticket;
 }
