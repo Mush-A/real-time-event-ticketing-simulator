@@ -70,6 +70,8 @@ public class SimulationController implements ITicketPoolObserver {
         if (ticketEvent.getEventType() == TicketEventType.SIMULATION_OVER) {
             stopSimulation();
         }
+
+        System.out.println(ticketEvent.getMessage());
     }
 
     public void sendSimulationUpdate(TicketEvent ticketEvent) {

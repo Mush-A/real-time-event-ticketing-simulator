@@ -49,7 +49,6 @@ public class TicketPool {
             if (!user.isRunning() || isProductionOver) return null;
             if (producedTicketsCount >= totalTickets) {
                 String message = "All tickets have been produced. No more tickets can be added.";
-                System.out.println(message);
                 this.notifyObservers(new TicketEvent(
                         TicketEventType.PRODUCTION_OVER,
                         message
@@ -59,7 +58,6 @@ public class TicketPool {
             }
             if (tickets.size() == maxTicketsCapacity) {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
-                System.out.println(message);
                 this.notifyObservers(new TicketEvent(
                         TicketEventType.POOL_FULL,
                         message
@@ -69,8 +67,7 @@ public class TicketPool {
                 ticket = new Ticket(100);
                 tickets.add(ticket);
                 producedTicketsCount++;
-                String message = "Ticket added to the pool." + ticket;
-                System.out.println(message);
+                String message = "Ticket " + ticket.getId() + " added to the pool by " + user.getName();
                 this.notifyObservers(new TicketEvent(
                         TicketEventType.TICKET_ADDED,
                         message,
@@ -92,7 +89,6 @@ public class TicketPool {
         try {
             if (tickets.isEmpty()) {
                 String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
-                System.out.println(message);
                 this.notifyObservers(new TicketEvent(
                         TicketEventType.POOL_EMPTY,
                         message
@@ -101,8 +97,7 @@ public class TicketPool {
             } else {
                 ticket = tickets.remove(0).buyTicket();
                 soldTicketsCount++; // Increment the sold tickets count
-                String message = "Ticket removed from the pool." + ticket;
-                System.out.println(message);
+                String message = "Ticket " + ticket.getId() + " purchased by " + user.getName();
                 this.notifyObservers(new TicketEvent(
                         TicketEventType.TICKET_PURCHASED,
                         message,
