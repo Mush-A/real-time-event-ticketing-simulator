@@ -42,11 +42,11 @@ public class TicketPool {
         this.observers = new ArrayList<>();
     }
 
-    public Ticket addTicket(User user) throws InterruptedException {
+    public void addTicket(User user) throws InterruptedException {
         lock.lock();
         Ticket ticket = null;
         try {
-            if (!user.isRunning() || isProductionOver) return null;
+            if (!user.isRunning() || isProductionOver) return;
             if (producedTicketsCount >= totalTickets) {
                 String message = "All tickets have been produced. No more tickets can be added.";
                 this.notifyObservers(new TicketEvent(
@@ -54,7 +54,7 @@ public class TicketPool {
                         message
                 ));
                 isProductionOver = true;
-                return null;
+                return;
             }
             if (tickets.size() == maxTicketsCapacity) {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
@@ -79,13 +79,12 @@ public class TicketPool {
         } finally {
             lock.unlock();
         }
-        return ticket;
     }
 
-    public Ticket removeTicket(User user) throws InterruptedException {
+    public void removeTicket(User user) throws InterruptedException {
         lock.lock();
         Ticket ticket = null;
-        if (!user.isRunning()) return null;
+        if (!user.isRunning()) return;
         try {
             if (tickets.isEmpty()) {
                 String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
@@ -118,7 +117,6 @@ public class TicketPool {
         } finally {
             lock.unlock();
         }
-        return ticket;
     }
 
     public void stopAllWaiting() {

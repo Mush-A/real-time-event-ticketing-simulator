@@ -15,7 +15,7 @@ public class Customer extends User {
     public void run() {
         while (isRunning()) {
             try {
-                this.addTicket(ticketPool.removeTicket(this));
+                ticketPool.removeTicket(this);
                 Thread.sleep(getRate());
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
