@@ -5,5 +5,6 @@ public enum TicketEventType {
     TICKET_ADDED,
     POOL_EMPTY,
     POOL_FULL,
-    SIMULATION_OVER
+    SIMULATION_OVER,
+    PRODUCTION_OVER
 }

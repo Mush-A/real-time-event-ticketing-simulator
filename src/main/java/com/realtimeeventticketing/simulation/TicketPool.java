@@ -14,6 +14,8 @@ public class TicketPool {
     private int totalTickets;
     private int maxTicketsCapacity;
     private int soldTicketsCount = 0;
+    private int producedTicketsCount = 0;
+    private boolean isProductionOver = false;
 
     private final List<ITicketPoolObserver> observers;
 
@@ -44,7 +46,17 @@ public class TicketPool {
         lock.lock();
         Ticket ticket = null;
         try {
-            if (!user.isRunning()) return null;
+            if (!user.isRunning() || isProductionOver) return null;
+            if (producedTicketsCount >= totalTickets) {
+                String message = "All tickets have been produced. No more tickets can be added.";
+                System.out.println(message);
+                this.notifyObservers(new TicketEvent(
+                        TicketEventType.PRODUCTION_OVER,
+                        message
+                ));
+                isProductionOver = true;
+                return null;
+            }
             if (tickets.size() == maxTicketsCapacity) {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
                 System.out.println(message);
@@ -56,6 +68,7 @@ public class TicketPool {
             } else {
                 ticket = new Ticket(100);
                 tickets.add(ticket);
+                producedTicketsCount++;
                 String message = "Ticket added to the pool." + ticket;
                 System.out.println(message);
                 this.notifyObservers(new TicketEvent(

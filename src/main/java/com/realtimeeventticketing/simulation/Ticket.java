@@ -6,7 +6,7 @@ public class Ticket {
     private TicketStatus status;
     private final double price;
 
-    public static int sequence = 0;
+    public static int sequence = 1;
 
     public Ticket(double price) {
         id = sequence++;
@@ -24,7 +24,7 @@ public class Ticket {
     }
 
     public static void resetId() {
-        sequence = 0;
+        sequence = 1;
     }
 
     public TicketStatus getStatus() {
