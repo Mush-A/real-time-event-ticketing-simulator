@@ -13,7 +13,7 @@ public class InputValidator {
                 }
                 return value;
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a non-negative integer:");
+                System.out.print("Invalid input. Please enter a non-negative integer:");
             }
         }
     }

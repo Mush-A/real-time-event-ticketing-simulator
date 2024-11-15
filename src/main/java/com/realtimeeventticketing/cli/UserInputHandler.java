@@ -10,32 +10,32 @@ public class UserInputHandler {
     }
 
     public int getTotalTickets() {
-        System.out.println("Enter total number of tickets:");
+        System.out.print("Enter total number of tickets: ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getTicketReleaseRate() {
-        System.out.println("Enter ticket release rate (milliseconds):");
+        System.out.print("Enter ticket release rate (milliseconds): ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getCustomerRetrievalRate() {
-        System.out.println("Enter customer retrieval rate (milliseconds):");
+        System.out.print("Enter customer retrieval rate (milliseconds): ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getMaxTicketsCapacity() {
-        System.out.println("Enter maximum tickets capacity:");
+        System.out.print("Enter maximum tickets capacity: ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getNumVendors() {
-        System.out.println("Enter number of vendors:");
+        System.out.print("Enter number of vendors: ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getNumCustomers() {
-        System.out.println("Enter number of customers:");
+        System.out.print("Enter number of customers: ");
         return InputValidator.getValidIntInput(scanner);
     }
 }

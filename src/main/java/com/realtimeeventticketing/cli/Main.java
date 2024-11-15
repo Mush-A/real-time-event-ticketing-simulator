@@ -32,7 +32,7 @@ public class Main implements ITicketPoolObserver {
 
         simulationBuilder.startSimulation();
 
-        System.out.println("All threads have finished execution.");
+        System.out.println("Simulation started");
     }
 
     public void stopSimulation() throws InterruptedException {
@@ -44,5 +44,7 @@ public class Main implements ITicketPoolObserver {
         if (ticketEvent.getEventType() == TicketEventType.SIMULATION_OVER) {
             stopSimulation();
         }
+
+        System.out.println(ticketEvent.getMessage());
     }
 }
