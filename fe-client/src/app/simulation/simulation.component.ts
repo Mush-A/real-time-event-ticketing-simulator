@@ -53,6 +53,7 @@ export class SimulationComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.loadHistoryEvents();
     // Check the current simulation status
     this.setIsSimulationRunning();
   }
@@ -70,6 +71,7 @@ export class SimulationComponent implements OnInit {
             console.error('Error starting simulation: ' + error);
           }
         });
+      this.clearMessages();
     }
   }
 
@@ -108,6 +110,25 @@ export class SimulationComponent implements OnInit {
   getSimulationStatus() {
     // Send a GET request to get the current simulation status
     return this.http.get<SimulationStatusType>('api/simulation/status');
+  }
+
+  getTicketEvents() {
+    // Send a GET request to get the ticket events
+    return this.http.get<TicketEvent[]>('api/simulation/ticket-events');
+  }
+
+  loadHistoryEvents() {
+    // Load the ticket events
+    this.getTicketEvents().subscribe({
+      next: (events: TicketEvent[]) => {
+        console.log('Ticket events: ' + JSON.stringify(events));
+        // Push the events to the BehaviorSubject
+        this.messagesSubject.next(events);
+      },
+      error: (error) => {
+        console.error('Error getting ticket events: ' + error);
+      }
+    });
   }
 
   setIsSimulationRunning() {

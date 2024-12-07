@@ -3,6 +3,9 @@ package com.realtimeeventticketing.simulation;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @RestController
 public class SimulationController implements ITicketPoolObserver {
 
@@ -61,6 +64,14 @@ public class SimulationController implements ITicketPoolObserver {
         } else {
             return "No simulation is running.";
         }
+    }
+
+    @GetMapping("/simulation/ticket-events")
+    public List<TicketEvent> getTicketEvents() {
+        if (simulationBuilder != null) {
+            return simulationBuilder.getTicketEvents();
+        }
+        return new ArrayList<>();
     }
 
     @Override

@@ -123,4 +123,8 @@ public class SimulationBuilder {
             this.simulation.addVendors(newVendors);
         }
     }
+
+    public List<TicketEvent> getTicketEvents() {
+        return this.ticketPool.getEventStore();
+    }
 }
