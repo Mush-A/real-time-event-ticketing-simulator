@@ -13,4 +13,5 @@ export interface User {
   running: boolean;
   totalTickets: number;
   type: UserType;
+  numberOfTickets: number;
 }

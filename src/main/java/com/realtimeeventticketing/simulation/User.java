@@ -4,6 +4,7 @@ public abstract class User implements Runnable {
     private final int id;
     private final String name;
     private int rate;
+    private int numberOfTickets = 0;
     private volatile boolean running = true;
     protected UserType type;
 
@@ -39,6 +40,14 @@ public abstract class User implements Runnable {
 
     public UserType getType() {
         return type;
+    }
+
+    public int getNumberOfTickets() {
+        return numberOfTickets;
+    }
+
+    public void addTicket() {
+        numberOfTickets++;
     }
 
     @Override

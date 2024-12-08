@@ -199,7 +199,7 @@ export class SimulationComponent implements OnInit {
       if (!existingEntry) {
         newVendorSeries.push({ name: event.user?.name ?? '', value: 1 });
       } else {
-        existingEntry.value = event.ticket?.id ?? 0;
+        existingEntry.value = event.user?.numberOfTickets ?? 0;
       }
     });
 
@@ -208,7 +208,7 @@ export class SimulationComponent implements OnInit {
       if (!existingEntry) {
         newCustomerSeries.push({ name: event.user?.name ?? '', value: 1 });
       } else {
-        existingEntry.value = event.ticket?.id ?? 0;
+        existingEntry.value = event.user?.numberOfTickets ?? 0;
       }
     });
 
@@ -218,8 +218,6 @@ export class SimulationComponent implements OnInit {
       { name: 'Customers', series: newCustomerSeries },
     ];
   }
-
-
 
   getMessageClass(eventType: EventType): string {
     switch (eventType) {
