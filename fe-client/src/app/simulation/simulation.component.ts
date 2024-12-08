@@ -47,12 +47,12 @@ export class SimulationComponent implements OnInit {
   constructor(private fb: FormBuilder, private http: HttpClient, private ws: WebSocketService) {
     // Initialize the form group with validators
     this.simulationForm = this.fb.group({
-      totalTickets: [100, Validators.required],
-      ticketReleaseRate: [500, Validators.required],
-      customerRetrievalRate: [500, Validators.required],
-      maxTicketsCapacity: [100, Validators.required],
-      numVendors: [1, Validators.required],
-      numCustomers: [1, Validators.required],
+      totalTickets: [100, [Validators.required, Validators.min(1)]],
+      ticketReleaseRate: [500, [Validators.required, Validators.min(1)]],
+      customerRetrievalRate: [500, [Validators.required, Validators.min(1)]],
+      maxTicketsCapacity: [100, [Validators.required, Validators.min(1)]],
+      numVendors: [1, [Validators.required, Validators.min(1)]],
+      numCustomers: [1, [Validators.required, Validators.min(1)]],
     });
 
     // Subscribe to the WebSocket service to receive updates
@@ -130,6 +130,20 @@ export class SimulationComponent implements OnInit {
     this.messagesSubject.next([]);
   }
 
+  clearChartData() {
+    // Clear the chart data
+    this.chartData = [
+      {
+        name: 'Vendors',
+        series: []
+      },
+      {
+        name: 'Customers',
+        series: []
+      }
+    ];
+  }
+
   getSimulationStatus() {
     // Send a GET request to get the current simulation status
     return this.http.get<SimulationStatusType>('api/simulation/status');
@@ -147,6 +161,7 @@ export class SimulationComponent implements OnInit {
         console.log('Ticket events: ' + JSON.stringify(events));
         // Push the events to the BehaviorSubject
         this.messagesSubject.next(events);
+        this.groupEventsByUserType(events);
       },
       error: (error) => {
         console.error('Error getting ticket events: ' + error);

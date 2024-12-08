@@ -3,14 +3,14 @@
   <div class="flex flex-col w-1/4 gap-4">
     <div class="w-full bg-white shadow-lg rounded-lg p-4 justify-center flex gap-4">
       <button
-        class="border-2 rounded p-4 text-zinc-600 font-semibold w-1/2"
+        class="border-2 rounded p-2 text-zinc-600 font-semibold w-1/2"
         [ngClass]="{'border-blue-200': display === 'eventLog', 'border-gray-200': display !== 'eventLog'}"
         (click)="display = 'eventLog'"
       >
         Event Log
       </button>
       <button
-        class="border-2 rounded p-4 text-zinc-600 font-semibold w-1/2"
+        class="border-2 rounded p-2 text-zinc-600 font-semibold w-1/2"
         [ngClass]="{'border-blue-200': display === 'dashboard', 'border-gray-200': display !== 'dashboard'}"
         (click)="display = 'dashboard'"
       >
@@ -29,6 +29,9 @@
           class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
           placeholder="Enter total tickets"
         />
+        <div class="text-xs text-red-500" *ngIf="simulationForm.get('totalTickets')?.hasError('min')">
+          Minimum value for total tickets is 1.
+        </div>
       </div>
 
       <div>
@@ -40,6 +43,9 @@
           class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
           placeholder="Enter ticket release rate"
         />
+        <div class="text-xs text-red-500" *ngIf="simulationForm.get('ticketReleaseRate')?.hasError('min')">
+          Minimum value for ticket release rate is 1.
+        </div>
       </div>
 
       <div>
@@ -51,6 +57,9 @@
           class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
           placeholder="Enter customer retrieval rate"
         />
+        <div class="text-xs text-red-500" *ngIf="simulationForm.get('customerRetrievalRate')?.hasError('min')">
+          Minimum value for customer release rate is 1.
+        </div>
       </div>
 
       <div>
@@ -62,6 +71,9 @@
           class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
           placeholder="Enter max tickets capacity"
         />
+        <div class="text-xs text-red-500" *ngIf="simulationForm.get('maxTicketsCapacity')?.hasError('min')">
+          Minimum value for max ticket capacity is 1.
+        </div>
       </div>
 
       <div>
@@ -73,6 +85,9 @@
           class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
           placeholder="Enter number of vendors"
         />
+        <div class="text-xs text-red-500" *ngIf="simulationForm.get('numVendors')?.hasError('min')">
+          Minimum number of vendors is 1.
+        </div>
       </div>
 
       <div>
@@ -84,6 +99,9 @@
           class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
           placeholder="Enter number of customers"
         />
+        <div class="text-xs text-red-500" *ngIf="simulationForm.get('numCustomers')?.hasError('min')">
+          Minimum number of customer is 1.
+        </div>
       </div>
 
       <div class="flex space-x-4">
@@ -181,6 +199,14 @@
           [xAxisLabel]="'Users'"
           [yAxisLabel]="'Tickets'">
         </ngx-charts-bar-vertical-2d>
+      </div>
+      <div>
+        <button
+          (click)="clearChartData()"
+          class="px-2 bg-red-500 text-white py-1 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 transition duration-200"
+        >
+          Clear Messages
+        </button>
       </div>
     </div>
   </div>

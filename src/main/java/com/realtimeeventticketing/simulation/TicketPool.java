@@ -140,6 +140,7 @@ public class TicketPool {
         } finally {
             lock.unlock();
             Ticket.resetId();
+            this.eventStore.clear();
         }
     }
 
