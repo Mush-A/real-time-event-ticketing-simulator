@@ -1,5 +1,10 @@
 import {Ticket} from './Ticket';
 
+export enum UserType {
+  VENDOR = 'VENDOR',
+  CUSTOMER = 'CUSTOMER'
+}
+
 export interface User {
   id: number;
   name: string;
@@ -7,4 +12,5 @@ export interface User {
   tickets: Ticket[];
   running: boolean;
   totalTickets: number;
+  type: UserType;
 }

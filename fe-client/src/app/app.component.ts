@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {SimulationComponent} from './simulation/simulation.component';
 
 @Component({
   selector: 'app-root',
@@ -10,5 +9,5 @@ import {SimulationComponent} from './simulation/simulation.component';
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  title = 'fe-client';
+  title = 'Ticketing System';
 }

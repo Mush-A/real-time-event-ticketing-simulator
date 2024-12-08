@@ -5,6 +5,7 @@ public abstract class User implements Runnable {
     private final String name;
     private int rate;
     private volatile boolean running = true;
+    protected UserType type;
 
     protected User(int id, String name, int rate) {
         this.id = id;
@@ -34,6 +35,10 @@ public abstract class User implements Runnable {
 
     public void setRate(int rate) {
         this.rate = rate;
+    }
+
+    public UserType getType() {
+        return type;
     }
 
     @Override

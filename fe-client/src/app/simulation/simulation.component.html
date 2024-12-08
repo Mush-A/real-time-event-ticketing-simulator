@@ -1,7 +1,23 @@
 <div class="flex h-screen bg-gray-100 p-4 gap-4">
   <!-- Left Form Section -->
-  <div class="flex flex-col w-1/4 justify-around">
-    <form [formGroup]="simulationForm" (ngSubmit)="onSubmit()" class="w-full space-y-4 bg-white shadow-lg rounded-lg p-6 justify-center">
+  <div class="flex flex-col w-1/4 gap-4">
+    <div class="w-full bg-white shadow-lg rounded-lg p-4 justify-center flex gap-4">
+      <button
+        class="border-2 rounded p-4 text-zinc-600 font-semibold w-1/2"
+        [ngClass]="{'border-blue-200': display === 'eventLog', 'border-gray-200': display !== 'eventLog'}"
+        (click)="display = 'eventLog'"
+      >
+        Event Log
+      </button>
+      <button
+        class="border-2 rounded p-4 text-zinc-600 font-semibold w-1/2"
+        [ngClass]="{'border-blue-200': display === 'dashboard', 'border-gray-200': display !== 'dashboard'}"
+        (click)="display = 'dashboard'"
+      >
+        Dashboard
+      </button>
+    </div>
+    <form [formGroup]="simulationForm" (ngSubmit)="onSubmit()" class="w-full space-y-4 bg-white shadow-lg rounded-lg p-4 justify-center">
       <h2 class="text-xl font-semibold text-gray-800">Simulation Settings</h2>
 
       <div>
@@ -76,7 +92,7 @@
           type="submit"
           class="flex-1 bg-blue-500 text-white py-1 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
         >
-          Start Simulation
+          Start
         </button>
 
         <button
@@ -85,7 +101,7 @@
           class="flex-1 bg-yellow-500 text-white py-1 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-200"
           (click)="updateSimulation()"
         >
-          Update Simulation
+          Update
         </button>
 
         <button
@@ -93,7 +109,7 @@
           type="button"
           class="flex-1 bg-gray-200 text-blue-500 py-1 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200"
         >
-          Stop Simulation
+          Stop
         </button>
       </div>
     </form>
@@ -101,8 +117,8 @@
 
   <!-- Right Message Section -->
   <div class="flex flex-col w-1/2 flex-grow">
-    <div class="flex flex-col gap-4 bg-white shadow-lg rounded-lg p-4 overflow-hidden flex-1">
-      <h2 class="text-xl font-semibold text-gray-800 mb-4">Messages</h2>
+    <div *ngIf="display === 'eventLog'" class="flex flex-col gap-4 bg-white shadow-lg rounded-lg p-4 overflow-hidden flex-1">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Event log</h2>
       <div class="flex flex-col flex-1 overflow-y-scroll space-y-4 py-4">
 
         <div
@@ -148,6 +164,23 @@
         >
           Clear Messages
         </button>
+      </div>
+    </div>
+
+    <div *ngIf="display === 'dashboard'" class="flex flex-col gap-4 bg-white shadow-lg rounded-lg p-4 overflow-hidden flex-1">
+      <h2 class="text-xl font-semibold text-gray-800 mb-4">Dashboard</h2>
+      <div class="h-full">
+        <ngx-charts-bar-vertical-2d
+          [results]="chartData"
+          [scheme]="chartColorScheme"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="true"
+          [showXAxisLabel]="true"
+          [showYAxisLabel]="true"
+          [xAxisLabel]="'Users'"
+          [yAxisLabel]="'Tickets'">
+        </ngx-charts-bar-vertical-2d>
       </div>
     </div>
   </div>

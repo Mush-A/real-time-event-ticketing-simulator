@@ -1,11 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
-import { CommonModule } from '@angular/common';
-import { WebSocketService } from '../services/websocket.service';
-import { BehaviorSubject } from 'rxjs';
+import {Component, OnInit} from '@angular/core';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {HttpClient} from '@angular/common/http';
+import {CommonModule} from '@angular/common';
+import {WebSocketService} from '../services/websocket.service';
+import {BehaviorSubject} from 'rxjs';
 import {EventType, TicketEvent} from '../models/TicketEvent';
 import {SimulationStatusType} from '../models/Simulation';
+import {Color, NgxChartsModule, ScaleType} from '@swimlane/ngx-charts';
+import {UserType} from '../models/User';
+import {ChartDatum, ChartGroup} from '../models/ChartDatum';
 
 @Component({
   selector: 'app-simulation',
@@ -13,6 +16,7 @@ import {SimulationStatusType} from '../models/Simulation';
   imports: [
     ReactiveFormsModule,
     CommonModule,
+    NgxChartsModule,
   ],
   templateUrl: './simulation.component.html',
   styleUrls: ['./simulation.component.css']
@@ -22,6 +26,23 @@ export class SimulationComponent implements OnInit {
   private messagesSubject = new BehaviorSubject<TicketEvent[]>([]);
   messages$ = this.messagesSubject.asObservable();
   isSimulationRunning = false;
+  display: "eventLog" | "dashboard" = "eventLog";
+  chartData: ChartGroup[] = [
+    {
+      name: 'Vendors',
+      series: []
+    },
+    {
+      name: 'Customers',
+      series: []
+    }
+  ];
+  chartColorScheme : Color = {
+    name: 'myScheme',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#f00', '#0f0', '#0ff', '#ff0', '#f0f', '#00f', '#50e', '#050', '#055', '#550', '#505']
+  };
 
   constructor(private fb: FormBuilder, private http: HttpClient, private ws: WebSocketService) {
     // Initialize the form group with validators
@@ -40,6 +61,8 @@ export class SimulationComponent implements OnInit {
         console.log('WebSocket update received: ' + JSON.stringify(update));
         // Push new messages to the BehaviorSubject
         this.messagesSubject.next([...this.messagesSubject.value, update]);
+
+        this.groupEventsByUserType(this.messagesSubject.value);
 
         if (update.eventType === EventType.SIMULATION_OVER) {
           // If the simulation is over, check the current simulation status
@@ -142,6 +165,45 @@ export class SimulationComponent implements OnInit {
       }
     })
   }
+
+  // Group events by user type (Vendor/Customer) and event type
+  groupEventsByUserType(events: TicketEvent[]) {
+    const userEvents = events.filter(
+      (event) =>
+        event.eventType === EventType.TICKET_ADDED || event.eventType === EventType.TICKET_PURCHASED
+    );
+
+    const vendorEvents = userEvents.filter((event) => event.user?.type === UserType.VENDOR);
+    const customerEvents = userEvents.filter((event) => event.user?.type === UserType.CUSTOMER);
+
+    const newVendorSeries : ChartDatum[] = [];
+    const newCustomerSeries : ChartDatum[] = [];
+
+    vendorEvents.forEach((event) => {
+      const existingEntry = newVendorSeries.find((e) => e.name === event.user?.name);
+      if (!existingEntry) {
+        newVendorSeries.push({ name: event.user?.name ?? '', value: 1 });
+      } else {
+        existingEntry.value = event.ticket?.id ?? 0;
+      }
+    });
+
+    customerEvents.forEach((event) => {
+      const existingEntry = newCustomerSeries.find((e) => e.name === event.user?.name);
+      if (!existingEntry) {
+        newCustomerSeries.push({ name: event.user?.name ?? '', value: 1 });
+      } else {
+        existingEntry.value = event.ticket?.id ?? 0;
+      }
+    });
+
+    // Reassign the chart data to trigger change detection
+    this.chartData = [
+      { name: 'Vendors', series: newVendorSeries },
+      { name: 'Customers', series: newCustomerSeries },
+    ];
+  }
+
 
 
   getMessageClass(eventType: EventType): string {
