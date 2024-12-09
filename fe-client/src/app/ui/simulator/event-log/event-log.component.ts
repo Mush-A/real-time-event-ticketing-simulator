@@ -17,15 +17,15 @@ export class EventLogComponent {
   getMessageClass(eventType: EventType): string {
     switch (eventType) {
       case EventType.TICKET_PURCHASED:
-        return 'bg-green-200 w-1/2 self-end';
+        return 'bg-gradient-to-b from-green-400 to-green-300 w-1/2 self-end';
       case EventType.TICKET_ADDED:
-        return 'bg-blue-200 w-1/2';
+        return 'bg-gradient-to-b from-blue-400 to-blue-300 w-1/2';
       case EventType.POOL_EMPTY:
-        return 'bg-red-200';
+        return 'bg-gradient-to-b from-red-500 to-red-400';
       case EventType.POOL_FULL:
-        return 'bg-yellow-200';
+        return 'bg-gradient-to-b from-yellow-400 to-yellow-300';
       default:
-        return 'bg-gray-200';
+        return 'bg-gradient-to-b from-gray-300 to-gray-200';
     }
   }
 

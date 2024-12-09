@@ -8,24 +8,17 @@
       class="p-4 rounded transition duration-200 shadow-sm"
     >
       <div class="flex flex-col space-y-1">
-        <span class="text-lg font-bold">{{ message.eventType.split("_").join(" ") }}</span>
-
-        <!-- Optional fields with conditional rendering -->
-        <ng-container *ngIf="message.user">
-          <div class="flex gap-2">
-            <span class="font-bold text-gray-600">Customer Name: </span>
-            <span class="text-gray-800">{{ message.user.name }}</span>
-          </div>
-        </ng-container>
+        <span class="font-bold flex justify-between">
+        <span>
+          <span>{{ message.eventType.split("_").join(" ") }}</span>
+        </span>
+          <span *ngIf="message.user"> By {{ message.user.name }}</span>
+        </span>
 
         <ng-container *ngIf="message.ticket">
           <div class="flex gap-2">
             <span class="font-bold text-gray-600">Ticket ID: </span>
             <span class="text-gray-800">{{ message.ticket.id }}</span>
-          </div>
-          <div class="flex gap-2">
-            <span class="font-bold text-gray-600">Ticket Price: </span>
-            <span class="text-gray-800">{{ message.ticket.price | currency }}</span>
           </div>
           <div class="flex gap-2">
             <span class="font-bold text-gray-600">Ticket Status: </span>

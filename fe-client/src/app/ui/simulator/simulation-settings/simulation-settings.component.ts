@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
 
@@ -21,12 +21,12 @@ export interface SimulationSettingsFormData {
   templateUrl: './simulation-settings.component.html',
 })
 export class SimulationSettingsComponent {
+  @Input() isSimulationRunning: boolean = false;
   @Output() formSubmit = new EventEmitter<SimulationSettingsFormData>();
   @Output() stopSimulation = new EventEmitter<void>();
   @Output() updateSimulation = new EventEmitter<SimulationSettingsFormData>();
 
   simulationForm: FormGroup;
-  isSimulationRunning = false;
 
   constructor(private fb: FormBuilder) {
     this.simulationForm = this.fb.group({

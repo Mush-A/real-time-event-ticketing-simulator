@@ -1,18 +1,33 @@
 <div class="flex h-screen bg-gray-100 p-4 gap-4">
   <div class="flex flex-col w-1/4 gap-4">
     <div class="w-full bg-white shadow-lg rounded-lg p-4 justify-center flex gap-4">
-      <button (click)="display = 'eventLog'" class="border-2 rounded p-2 text-zinc-600 font-semibold w-1/2">Event Log</button>
-      <button (click)="display = 'dashboard'" class="border-2 rounded p-2 text-zinc-600 font-semibold w-1/2">Dashboard</button>
+      <button (click)="display = 'eventLog'" class="border-2 rounded p-2 text-zinc-600 font-semibold w-1/2" [class.border-blue-200]="display === 'eventLog'">
+        Event Log
+      </button>
+      <button (click)="display = 'dashboard'" class="border-2 rounded p-2 text-zinc-600 font-semibold w-1/2" [class.border-blue-200]="display === 'dashboard'">
+        Dashboard
+      </button>
     </div>
-    <app-simulation-settings (formSubmit)="handleFormSubmit($event)" (stopSimulation)="stopSimulation()" (updateSimulation)="handleUpdateSimulation($event)"></app-simulation-settings>
+    <app-simulation-settings
+      (formSubmit)="handleFormSubmit($event)"
+      (stopSimulation)="stopSimulation()"
+      (updateSimulation)="handleUpdateSimulation($event)"
+      [isSimulationRunning]="isSimulationRunning"
+    />
   </div>
 
   <div class="flex flex-col w-1/2 flex-grow">
     <div *ngIf="display === 'eventLog'" class="h-full">
-      <app-event-log [messages]="(messages$ | async) ?? []" (clearMessages)="clearMessages()"></app-event-log>
+      <app-event-log
+        [messages]="(messages$ | async) ?? []"
+        (clearMessages)="clearMessages()"
+      />
     </div>
     <div *ngIf="display === 'dashboard'" class="h-full">
-      <app-dashboard [chartData]="chartData" (clearChartData)="clearChartData()"></app-dashboard>
+      <app-dashboard
+        [chartData]="chartData"
+        (clearChartData)="clearChartData()"
+      />
     </div>
   </div>
 </div>
