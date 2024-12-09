@@ -58,7 +58,7 @@ export class SimulationComponent implements OnInit {
     // Subscribe to the WebSocket service to receive updates
     this.ws.getSimulationUpdates().subscribe({
       next: (update) => {
-        console.log('WebSocket update received: ' + JSON.stringify(update));
+        // console.log('WebSocket update received: ' + JSON.stringify(update));
         // Push new messages to the BehaviorSubject
         this.messagesSubject.next([...this.messagesSubject.value, update]);
 
@@ -158,7 +158,7 @@ export class SimulationComponent implements OnInit {
     // Load the ticket events
     this.getTicketEvents().subscribe({
       next: (events: TicketEvent[]) => {
-        console.log('Ticket events: ' + JSON.stringify(events));
+        // console.log('Ticket events: ' + JSON.stringify(events));
         // Push the events to the BehaviorSubject
         this.messagesSubject.next(events);
         this.groupEventsByUserType(events);
