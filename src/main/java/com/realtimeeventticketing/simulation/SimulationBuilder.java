@@ -1,5 +1,11 @@
 package com.realtimeeventticketing.simulation;
 
+import com.realtimeeventticketing.tickets.ITicketPoolObserver;
+import com.realtimeeventticketing.tickets.TicketEvent;
+import com.realtimeeventticketing.tickets.TicketPool;
+import com.realtimeeventticketing.users.Customer;
+import com.realtimeeventticketing.users.Vendor;
+
 import java.util.ArrayList;
 import java.util.List;
 

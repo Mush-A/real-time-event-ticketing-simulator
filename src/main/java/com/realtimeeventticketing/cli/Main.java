@@ -1,9 +1,9 @@
 package com.realtimeeventticketing.cli;
 
-import com.realtimeeventticketing.simulation.ITicketPoolObserver;
+import com.realtimeeventticketing.tickets.ITicketPoolObserver;
 import com.realtimeeventticketing.simulation.SimulationBuilder;
-import com.realtimeeventticketing.simulation.TicketEvent;
-import com.realtimeeventticketing.simulation.TicketEventType;
+import com.realtimeeventticketing.tickets.TicketEvent;
+import com.realtimeeventticketing.tickets.TicketEventType;
 
 import java.util.Scanner;
 

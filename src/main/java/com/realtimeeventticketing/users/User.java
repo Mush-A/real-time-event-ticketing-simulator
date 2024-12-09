@@ -1,4 +1,4 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.users;
 
 import java.util.concurrent.atomic.AtomicInteger;
 

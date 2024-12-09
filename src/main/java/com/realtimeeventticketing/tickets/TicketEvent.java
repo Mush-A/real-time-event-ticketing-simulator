@@ -1,4 +1,6 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.tickets;
+
+import com.realtimeeventticketing.users.User;
 
 public class TicketEvent {
     private final TicketEventType eventType;

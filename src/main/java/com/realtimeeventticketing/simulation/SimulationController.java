@@ -1,5 +1,8 @@
 package com.realtimeeventticketing.simulation;
 
+import com.realtimeeventticketing.tickets.ITicketPoolObserver;
+import com.realtimeeventticketing.tickets.TicketEvent;
+import com.realtimeeventticketing.tickets.TicketEventType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 

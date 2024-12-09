@@ -1,4 +1,4 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.tickets;
 
 public class Ticket {
 

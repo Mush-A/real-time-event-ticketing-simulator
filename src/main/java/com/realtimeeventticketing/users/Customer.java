@@ -1,14 +1,16 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.users;
 
-public class Vendor extends User {
+import com.realtimeeventticketing.tickets.TicketPool;
+
+public class Customer extends User {
 
     private final TicketPool ticketPool;
 
     public static int sequence = 0;
 
-    public Vendor(String name, TicketPool ticketPool, int rate) {
+    public Customer(String name, TicketPool ticketPool, int rate) {
         super(sequence++, name + sequence, rate);
-        super.type = UserType.VENDOR;
+        super.type = UserType.CUSTOMER;
         this.ticketPool = ticketPool;
     }
 
@@ -16,7 +18,7 @@ public class Vendor extends User {
     public void run() {
         while (isRunning()) {
             try {
-                ticketPool.addTicket(this);
+                ticketPool.removeTicket(this);
                 super.addTicket();
                 Thread.sleep(getRate());
             } catch (InterruptedException e) {

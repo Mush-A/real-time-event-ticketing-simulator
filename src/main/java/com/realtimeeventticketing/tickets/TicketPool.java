@@ -1,4 +1,6 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.tickets;
+
+import com.realtimeeventticketing.users.User;
 
 import java.util.ArrayList;
 import java.util.Collections;

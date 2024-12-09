@@ -1,5 +1,8 @@
 package com.realtimeeventticketing.simulation;
 
+import com.realtimeeventticketing.users.Customer;
+import com.realtimeeventticketing.users.Vendor;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
