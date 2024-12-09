@@ -7,8 +7,8 @@ public class Customer extends User {
     public static int sequence = 0;
     private final TicketPool ticketPool;
 
-    public Customer(String name, TicketPool ticketPool, int rate) {
-        super(sequence++, name + sequence, rate);
+    public Customer(TicketPool ticketPool, int rate) {
+        super(sequence++, "Customer " + sequence, rate);
         super.type = UserType.CUSTOMER;
         this.ticketPool = ticketPool;
     }
