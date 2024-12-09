@@ -1,0 +1,114 @@
+<form [formGroup]="simulationForm" (ngSubmit)="onSubmit()" class="w-full space-y-4 bg-white shadow-lg rounded-lg p-4 justify-center">
+  <h2 class="text-xl font-semibold text-gray-800">Simulation Settings</h2>
+
+  <div>
+    <label class="block text-gray-700 mb-1">Total Tickets</label>
+    <input
+      formControlName="totalTickets"
+      type="number"
+      required
+      class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+      placeholder="Enter total tickets"
+    />
+    <div class="text-xs text-red-500" *ngIf="simulationForm.get('totalTickets')?.hasError('min')">
+      Minimum value for total tickets is 1.
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-gray-700 mb-1">Ticket Release Rate</label>
+    <input
+      formControlName="ticketReleaseRate"
+      type="number"
+      required
+      class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+      placeholder="Enter ticket release rate"
+    />
+    <div class="text-xs text-red-500" *ngIf="simulationForm.get('ticketReleaseRate')?.hasError('min')">
+      Minimum value for ticket release rate is 1.
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-gray-700 mb-1">Customer Retrieval Rate</label>
+    <input
+      formControlName="customerRetrievalRate"
+      type="number"
+      required
+      class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+      placeholder="Enter customer retrieval rate"
+    />
+    <div class="text-xs text-red-500" *ngIf="simulationForm.get('customerRetrievalRate')?.hasError('min')">
+      Minimum value for customer release rate is 1.
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-gray-700 mb-1">Max Tickets Capacity</label>
+    <input
+      formControlName="maxTicketsCapacity"
+      type="number"
+      required
+      class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+      placeholder="Enter max tickets capacity"
+    />
+    <div class="text-xs text-red-500" *ngIf="simulationForm.get('maxTicketsCapacity')?.hasError('min')">
+      Minimum value for max ticket capacity is 1.
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-gray-700 mb-1">Number of Vendors</label>
+    <input
+      formControlName="numVendors"
+      type="number"
+      required
+      class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+      placeholder="Enter number of vendors"
+    />
+    <div class="text-xs text-red-500" *ngIf="simulationForm.get('numVendors')?.hasError('min')">
+      Minimum number of vendors is 1.
+    </div>
+  </div>
+
+  <div>
+    <label class="block text-gray-700 mb-1">Number of Customers</label>
+    <input
+      formControlName="numCustomers"
+      type="number"
+      required
+      class="w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+      placeholder="Enter number of customers"
+    />
+    <div class="text-xs text-red-500" *ngIf="simulationForm.get('numCustomers')?.hasError('min')">
+      Minimum number of customer is 1.
+    </div>
+  </div>
+
+  <div class="flex space-x-4">
+    <button
+      *ngIf="!isSimulationRunning"
+      type="submit"
+      class="flex-1 bg-blue-500 text-white py-1 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
+    >
+      Start
+    </button>
+
+    <button
+      *ngIf="isSimulationRunning"
+      type="button"
+      class="flex-1 bg-yellow-500 text-white py-1 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 transition duration-200"
+      (click)="onUpdate()"
+    >
+      Update
+    </button>
+
+    <button
+      (click)="onStop()"
+      type="button"
+      class="flex-1 bg-gray-200 text-blue-500 py-1 rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition duration-200"
+    >
+      Stop
+    </button>
+  </div>
+</form>

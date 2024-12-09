@@ -1,28 +1,34 @@
 import {Component, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
-import {WebSocketService} from '../services/websocket.service';
 import {BehaviorSubject} from 'rxjs';
-import {EventType, TicketEvent} from '../models/TicketEvent';
-import {SimulationStatusType} from '../models/Simulation';
-import {Color, NgxChartsModule, ScaleType} from '@swimlane/ngx-charts';
-import {UserType} from '../models/User';
-import {ChartDatum, ChartGroup} from '../models/ChartDatum';
+import {NgxChartsModule} from '@swimlane/ngx-charts';
+import {EventType, TicketEvent} from '../../../models/TicketEvent';
+import {ChartDatum, ChartGroup} from '../../../models/ChartDatum';
+import {WebSocketService} from '../../../services/websocket.service';
+import {SimulationStatusType} from '../../../models/Simulation';
+import {UserType} from '../../../models/User';
+import {
+  SimulationSettingsComponent,
+  SimulationSettingsFormData
+} from '../simulation-settings/simulation-settings.component';
+import {EventLogComponent} from '../event-log/event-log.component';
+import {DashboardComponent} from '../dashboard/dashboard.component';
 
 @Component({
   selector: 'app-simulation',
   standalone: true,
   imports: [
-    ReactiveFormsModule,
     CommonModule,
     NgxChartsModule,
+    SimulationSettingsComponent,
+    EventLogComponent,
+    DashboardComponent,
   ],
   templateUrl: './simulation.component.html',
-  styleUrls: ['./simulation.component.css']
 })
 export class SimulationComponent implements OnInit {
-  simulationForm: FormGroup;
   private messagesSubject = new BehaviorSubject<TicketEvent[]>([]);
   messages$ = this.messagesSubject.asObservable();
   isSimulationRunning = false;
@@ -37,24 +43,8 @@ export class SimulationComponent implements OnInit {
       series: []
     }
   ];
-  chartColorScheme : Color = {
-    name: 'myScheme',
-    selectable: true,
-    group: ScaleType.Ordinal,
-    domain: ['#f00', '#0f0', '#0ff', '#ff0', '#f0f', '#00f', '#50e', '#050', '#055', '#550', '#505']
-  };
 
-  constructor(private fb: FormBuilder, private http: HttpClient, private ws: WebSocketService) {
-    // Initialize the form group with validators
-    this.simulationForm = this.fb.group({
-      totalTickets: [100, [Validators.required, Validators.min(1)]],
-      ticketReleaseRate: [500, [Validators.required, Validators.min(1)]],
-      customerRetrievalRate: [500, [Validators.required, Validators.min(1)]],
-      maxTicketsCapacity: [100, [Validators.required, Validators.min(1)]],
-      numVendors: [1, [Validators.required, Validators.min(1)]],
-      numCustomers: [1, [Validators.required, Validators.min(1)]],
-    });
-
+  constructor(private http: HttpClient, private ws: WebSocketService) {
     // Subscribe to the WebSocket service to receive updates
     this.ws.getSimulationUpdates().subscribe({
       next: (update) => {
@@ -81,21 +71,18 @@ export class SimulationComponent implements OnInit {
     this.setIsSimulationRunning();
   }
 
-  onSubmit() {
-    if (this.simulationForm.valid) {
-      // Send a POST request to start the simulation
-      this.http.post('api/simulation/start', this.simulationForm.value, { responseType: 'text' })
-        .subscribe({
-          next: (response: string) => {
-            console.log('Simulation started: ' + response);
-            this.setIsSimulationRunning();
-          },
-          error: (error) => {
-            console.error('Error starting simulation: ' + error);
-          }
-        });
-      this.clearMessages();
-    }
+  handleFormSubmit(event: SimulationSettingsFormData) {
+    this.http.post('api/simulation/start', event, { responseType: 'text' })
+      .subscribe({
+        next: (response: string) => {
+          console.log('Simulation started: ' + response);
+          this.setIsSimulationRunning();
+        },
+        error: (error) => {
+          console.error('Error starting simulation: ' + error);
+        }
+      });
+    this.clearMessages();
   }
 
   stopSimulation() {
@@ -112,9 +99,9 @@ export class SimulationComponent implements OnInit {
       });
   }
 
-  updateSimulation() {
+  handleUpdateSimulation(event: SimulationSettingsFormData) {
     // Send a POST request to update the simulation
-    this.http.put('api/simulation/update', this.simulationForm.value, { responseType: 'text' })
+    this.http.put('api/simulation/update', event, { responseType: 'text' })
       .subscribe({
         next: (response: string) => {
           console.log('Simulation updated: ' + response);
@@ -217,20 +204,5 @@ export class SimulationComponent implements OnInit {
       { name: 'Vendors', series: newVendorSeries },
       { name: 'Customers', series: newCustomerSeries },
     ];
-  }
-
-  getMessageClass(eventType: EventType): string {
-    switch (eventType) {
-      case EventType.TICKET_PURCHASED:
-        return 'bg-green-200 w-1/2 self-end';
-      case EventType.TICKET_ADDED:
-        return 'bg-blue-200 w-1/2';
-      case EventType.POOL_EMPTY:
-        return 'bg-red-200';
-      case EventType.POOL_FULL:
-        return 'bg-yellow-200';
-      default:
-        return 'bg-gray-200';
-    }
   }
 }
