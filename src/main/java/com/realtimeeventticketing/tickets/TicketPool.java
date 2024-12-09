@@ -14,13 +14,22 @@ public class TicketPool {
     private final List<TicketEvent> eventStore;
     private final Lock lock;
     private final Condition condition;
+    private final List<ITicketPoolObserver> observers;
     private int totalTickets;
     private int maxTicketsCapacity;
     private int soldTicketsCount = 0;
     private int producedTicketsCount = 0;
     private boolean isProductionOver = false;
 
-    private final List<ITicketPoolObserver> observers;
+    public TicketPool(int totalTickets, int maxTicketsCapacity) {
+        this.totalTickets = totalTickets;
+        this.maxTicketsCapacity = maxTicketsCapacity;
+        this.tickets = Collections.synchronizedList(new ArrayList<>());
+        this.eventStore = Collections.synchronizedList(new ArrayList<>());
+        this.lock = new ReentrantLock();
+        this.condition = lock.newCondition();
+        this.observers = new ArrayList<>();
+    }
 
     public void addObserver(ITicketPoolObserver observer) {
         observers.add(observer);
@@ -34,16 +43,6 @@ public class TicketPool {
         for (ITicketPoolObserver observer : observers) {
             observer.onTicketEvent(event);
         }
-    }
-
-    public TicketPool(int totalTickets, int maxTicketsCapacity) {
-        this.totalTickets = totalTickets;
-        this.maxTicketsCapacity = maxTicketsCapacity;
-        this.tickets = Collections.synchronizedList(new ArrayList<>());
-        this.eventStore = Collections.synchronizedList(new ArrayList<>());
-        this.lock = new ReentrantLock();
-        this.condition = lock.newCondition();
-        this.observers = new ArrayList<>();
     }
 
     public void addTicket(User user) throws InterruptedException {

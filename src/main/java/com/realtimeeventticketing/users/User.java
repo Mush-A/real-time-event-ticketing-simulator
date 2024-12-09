@@ -5,10 +5,10 @@ import java.util.concurrent.atomic.AtomicInteger;
 public abstract class User implements Runnable {
     private final int id;
     private final String name;
-    private int rate;
     private final AtomicInteger numberOfTickets = new AtomicInteger(0);
-    private volatile boolean running = true;
     protected UserType type;
+    private int rate;
+    private volatile boolean running = true;
 
     protected User(int id, String name, int rate) {
         this.id = id;
