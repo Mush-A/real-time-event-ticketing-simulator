@@ -1,5 +1,8 @@
 package com.realtimeeventticketing.core.simulation;
 
+import com.realtimeeventticketing.core.tickets.ITicketPoolObserver;
+import com.realtimeeventticketing.core.tickets.Ticket;
+import com.realtimeeventticketing.core.tickets.TicketPool;
 import com.realtimeeventticketing.core.users.Customer;
 import com.realtimeeventticketing.core.users.Vendor;
 
@@ -14,14 +17,39 @@ import java.util.concurrent.locks.ReentrantLock;
 public class Simulation {
     private final List<Vendor> vendors;
     private final List<Customer> customers;
+    private final TicketPool ticketPool;
     private final ExecutorService executorService;
     private final Lock vendorLock = new ReentrantLock();
     private final Lock customerLock = new ReentrantLock();
 
-    public Simulation(List<Vendor> vendors, List<Customer> customers) {
-        this.vendors = new ArrayList<>(vendors);
-        this.customers = new ArrayList<>(customers);
+    private final SimulationConfig config;
+
+    public Simulation(SimulationConfig config, ITicketPoolObserver observer) {
+        this.config = config;
+
+        this.ticketPool = new TicketPool(config.getTotalTickets(), config.getMaxTicketsCapacity());
+        this.ticketPool.addObserver(observer);
+
+        this.vendors = buildVendors(config.getNumVendors(), config.getTicketReleaseRate());
+        this.customers = buildCustomers(config.getNumCustomers(), config.getCustomerRetrievalRate());
+
         this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
+    }
+
+    private List<Vendor> buildVendors(int numVendors, int ticketReleaseRate) {
+        List<Vendor> v = new ArrayList<>();
+        for (int i = 0; i < numVendors; i++) {
+            v.add(new Vendor(ticketPool, ticketReleaseRate));
+        }
+        return v;
+    }
+
+    private List<Customer> buildCustomers(int numCustomers, int customerRetrievalRate) {
+        List<Customer> c = new ArrayList<>();
+        for (int i = 0; i < numCustomers; i++) {
+            c.add(new Customer(ticketPool, customerRetrievalRate));
+        }
+        return c;
     }
 
     public void run() {
@@ -63,10 +91,15 @@ public class Simulation {
             customerLock.unlock();
         }
 
+        this.ticketPool.stopAllWaiting();
+        Vendor.resetId();
+        Customer.resetId();
+        Ticket.resetId();
+
         if (executorService != null) {
             executorService.shutdown();
             if (!executorService.awaitTermination(5, TimeUnit.SECONDS)) {
-                executorService.shutdownNow();  // Force shutdown if tasks are not terminating
+                executorService.shutdownNow();
             }
         }
     }
@@ -75,89 +108,74 @@ public class Simulation {
         return !executorService.isShutdown();
     }
 
-    public void addCustomers(List<Customer> customers) {
-        customerLock.lock();
-        try {
-            this.customers.addAll(customers);
-            if (isRunning()) {
-                for (Customer customer : customers) {
-                    executorService.submit(customer);
-                }
-            }
-        } finally {
-            customerLock.unlock();
-        }
-    }
-
-    public void addVendors(List<Vendor> vendors) {
-        vendorLock.lock();
-        try {
-            this.vendors.addAll(vendors);
-            if (isRunning()) {
-                for (Vendor vendor : vendors) {
-                    executorService.submit(vendor);
-                }
-            }
-        } finally {
-            vendorLock.unlock();
-        }
-    }
-
-    public void removeCustomers(int customersToRemove) {
-        customerLock.lock();
-        try {
-            int currentSize = this.customers.size();
-            int removeCount = Math.min(customersToRemove, currentSize);
-            for (int i = 0; i < removeCount; i++) {
-                Customer customer = this.customers.remove(0);
-                customer.stop();
-            }
-        } finally {
-            customerLock.unlock();
-        }
-    }
-
-    public void removeVendors(int vendorsToRemove) {
-        vendorLock.lock();
-        try {
-            int currentSize = this.vendors.size();
-            int removeCount = Math.min(vendorsToRemove, currentSize);
-            for (int i = 0; i < removeCount; i++) {
-                Vendor vendor = this.vendors.remove(0);
-                vendor.stop();
-            }
-        } finally {
-            vendorLock.unlock();
-        }
+    public List<Vendor> getVendors() {
+        return new ArrayList<>(this.vendors);
     }
 
     public List<Customer> getCustomers() {
         return new ArrayList<>(this.customers);
     }
 
-    public List<Vendor> getVendors() {
-        return new ArrayList<>(this.vendors);
+    public TicketPool getTicketPool() {
+        return this.ticketPool;
     }
 
-    public void setCustomerRetrievalRate(int rate) {
+    public void updateVendorReleaseRate(int newRate) {
+        vendorLock.lock();
+        try {
+            for (Vendor vendor : vendors) {
+                vendor.setRate(newRate);
+            }
+        } finally {
+            vendorLock.unlock();
+        }
+    }
+
+    public void updateCustomerRetrievalRate(int newRate) {
         customerLock.lock();
         try {
             for (Customer customer : customers) {
-                customer.setRate(rate);
+                customer.setRate(newRate);
             }
         } finally {
             customerLock.unlock();
         }
     }
 
-    public void setVendorReleaseRate(int rate) {
-        vendorLock.lock();
-        try {
-            for (Vendor vendor : vendors) {
-                vendor.setRate(rate);
+    public void updateVendors(int newVendorCount) {
+        int currentVendorCount = vendors.size();
+        if (newVendorCount > currentVendorCount) {
+            int numVendorsToAdd = newVendorCount - currentVendorCount;
+            List<Vendor> newVendors = buildVendors(numVendorsToAdd, this.config.getTicketReleaseRate());
+            vendors.addAll(newVendors);
+            newVendors.forEach(executorService::submit);
+        } else if (newVendorCount < currentVendorCount) {
+            int numVendorsToRemove = currentVendorCount - newVendorCount;
+            for (int i = 0; i < numVendorsToRemove; i++) {
+                Vendor vendor = vendors.remove(0);
+                vendor.stop();
             }
-        } finally {
-            vendorLock.unlock();
         }
+    }
+
+    public void updateCustomers(int newCustomerCount) {
+        int currentCustomerCount = customers.size();
+        if (newCustomerCount > currentCustomerCount) {
+            int numCustomersToAdd = newCustomerCount - currentCustomerCount;
+            List<Customer> newCustomers = buildCustomers(numCustomersToAdd, this.config.getCustomerRetrievalRate());
+            customers.addAll(newCustomers);
+            newCustomers.forEach(executorService::submit);
+        } else if (newCustomerCount < currentCustomerCount) {
+            int numCustomersToRemove = currentCustomerCount - newCustomerCount;
+            for (int i = 0; i < numCustomersToRemove; i++) {
+                Customer customer = customers.remove(0);
+                customer.stop();
+            }
+        }
+    }
+
+    public void updateTicketPool(int totalTickets, int maxTicketsCapacity) {
+        this.ticketPool.setTotalTickets(totalTickets);
+        this.ticketPool.setMaxTicketsCapacity(maxTicketsCapacity);
     }
 }

@@ -1,5 +1,6 @@
 package com.realtimeeventticketing.web.services;
 
+import com.realtimeeventticketing.core.simulation.Simulation;
 import com.realtimeeventticketing.core.simulation.SimulationBuilder;
 import com.realtimeeventticketing.core.simulation.SimulationRequest;
 import com.realtimeeventticketing.core.simulation.SimulationStatusType;
@@ -19,63 +20,80 @@ public class SimulationService implements ITicketPoolObserver {
 
     private static final Logger log = LogManager.getLogger(SimulationService.class);
     private final SimpMessagingTemplate messagingTemplate;
-    private SimulationBuilder simulationBuilder;
+    private Simulation simulation;
 
     public SimulationService(SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
     }
 
     public String startSimulation(SimulationRequest request) {
-        if (simulationBuilder != null && simulationBuilder.isSimulationRunning()) {
+        if (simulation != null && simulation.isRunning()) {
             return "Simulation is already running.";
         }
 
-        simulationBuilder = new SimulationBuilder()
+        SimulationBuilder builder = new SimulationBuilder()
                 .setTotalTickets(request.getTotalTickets())
                 .setTicketReleaseRate(request.getTicketReleaseRate())
                 .setCustomerRetrievalRate(request.getCustomerRetrievalRate())
                 .setMaxTicketsCapacity(request.getMaxTicketsCapacity())
                 .setNumVendors(request.getNumVendors())
-                .setNumCustomers(request.getNumCustomers())
-                .buildTicketPool(this)
-                .buildSimulation();
+                .setNumCustomers(request.getNumCustomers());
 
-        simulationBuilder.startSimulation();
-        return "Simulation started";
+        simulation = builder.buildSimulation(this); // Pass this service as the observer
+        simulation.run();
+
+        log.info("Simulation started.");
+        return "Simulation started.";
     }
 
-    public String stopSimulation() throws InterruptedException {
-        if (simulationBuilder != null) {
-            simulationBuilder.stopSimulation();
-            return "Simulation stopped.";
+    public String stopSimulation() {
+        if (simulation != null && simulation.isRunning()) {
+            try {
+                simulation.stop();
+                log.info("Simulation stopped.");
+                return "Simulation stopped.";
+            } catch (InterruptedException e) {
+                log.error("Error stopping the simulation: ", e);
+                Thread.currentThread().interrupt();
+                return "Error stopping the simulation.";
+            }
         }
         return "No simulation is running.";
     }
 
     public SimulationStatusType getSimulationStatus() {
-        if (simulationBuilder != null && simulationBuilder.isSimulationRunning()) {
+        if (simulation != null && simulation.isRunning()) {
             return SimulationStatusType.RUNNING;
         }
         return SimulationStatusType.NOT_RUNNING;
     }
 
     public String updateSimulation(SimulationRequest request) {
-        if (simulationBuilder != null) {
-            simulationBuilder.updateSimulation(request);
+        if (simulation != null && simulation.isRunning()) {
+            SimulationBuilder builder = new SimulationBuilder()
+                    .setTotalTickets(request.getTotalTickets())
+                    .setTicketReleaseRate(request.getTicketReleaseRate())
+                    .setCustomerRetrievalRate(request.getCustomerRetrievalRate())
+                    .setMaxTicketsCapacity(request.getMaxTicketsCapacity())
+                    .setNumVendors(request.getNumVendors())
+                    .setNumCustomers(request.getNumCustomers());
+
+            builder.updateSimulation(this.simulation);
+            log.info("Simulation updated.");
             return "Simulation updated.";
         }
         return "No simulation is running.";
     }
 
     public List<TicketEvent> getTicketEvents() {
-        if (simulationBuilder != null) {
-            return simulationBuilder.getTicketEvents();
+        if (simulation != null) {
+            return simulation.getTicketPool().getEventStore();
         }
         return new ArrayList<>();
     }
 
     @Override
-    public void onTicketEvent(TicketEvent ticketEvent) throws InterruptedException {
+    public void onTicketEvent(TicketEvent ticketEvent) {
         sendSimulationUpdate(ticketEvent);
 
         if (ticketEvent.getEventType() == TicketEventType.SIMULATION_OVER) {
