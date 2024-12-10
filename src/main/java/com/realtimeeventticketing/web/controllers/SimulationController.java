@@ -1,6 +1,9 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.web.controllers;
 
-import com.realtimeeventticketing.tickets.TicketEvent;
+import com.realtimeeventticketing.core.simulation.SimulationRequest;
+import com.realtimeeventticketing.web.services.SimulationService;
+import com.realtimeeventticketing.core.simulation.SimulationStatusType;
+import com.realtimeeventticketing.core.tickets.TicketEvent;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

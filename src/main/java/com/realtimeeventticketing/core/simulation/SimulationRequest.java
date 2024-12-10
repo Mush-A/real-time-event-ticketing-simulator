@@ -1,4 +1,4 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.core.simulation;
 
 public class SimulationRequest {
     private int totalTickets;

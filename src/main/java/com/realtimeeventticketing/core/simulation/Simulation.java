@@ -1,7 +1,7 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.core.simulation;
 
-import com.realtimeeventticketing.users.Customer;
-import com.realtimeeventticketing.users.Vendor;
+import com.realtimeeventticketing.core.users.Customer;
+import com.realtimeeventticketing.core.users.Vendor;
 
 import java.util.ArrayList;
 import java.util.List;

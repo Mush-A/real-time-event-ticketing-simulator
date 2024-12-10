@@ -1,6 +1,6 @@
-package com.realtimeeventticketing.users;
+package com.realtimeeventticketing.core.users;
 
-import com.realtimeeventticketing.tickets.TicketPool;
+import com.realtimeeventticketing.core.tickets.TicketPool;
 
 public class Customer extends User {
 

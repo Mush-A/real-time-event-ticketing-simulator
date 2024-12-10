@@ -1,25 +1,25 @@
 package com.realtimeeventticketing.cli;
 
-import com.realtimeeventticketing.simulation.SimulationBuilder;
-import com.realtimeeventticketing.tickets.ITicketPoolObserver;
-import com.realtimeeventticketing.tickets.TicketEvent;
-import com.realtimeeventticketing.tickets.TicketEventType;
+import com.realtimeeventticketing.core.simulation.SimulationBuilder;
+import com.realtimeeventticketing.core.tickets.ITicketPoolObserver;
+import com.realtimeeventticketing.core.tickets.TicketEvent;
+import com.realtimeeventticketing.core.tickets.TicketEventType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Scanner;
 
-public class Main implements ITicketPoolObserver {
+public class CLI implements ITicketPoolObserver {
 
-    private static final Logger log = LogManager.getLogger(Main.class);
+    private static final Logger log = LogManager.getLogger(CLI.class);
     private SimulationBuilder simulationBuilder;
 
-    public static void main(String[] args) throws InterruptedException {
-        Main main = new Main();
+    public static void main(String[] args) {
+        CLI main = new CLI();
         main.startSimulation();
     }
 
-    public void startSimulation() throws InterruptedException {
+    public void startSimulation() {
         Scanner scanner = new Scanner(System.in);
         UserInputHandler userInputHandler = new UserInputHandler(scanner);
 
@@ -35,7 +35,7 @@ public class Main implements ITicketPoolObserver {
 
         simulationBuilder.startSimulation();
 
-        System.out.println("Simulation started");
+        log.info("Simulation started");
     }
 
     public void stopSimulation() throws InterruptedException {

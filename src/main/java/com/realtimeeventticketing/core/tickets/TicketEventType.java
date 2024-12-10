@@ -1,4 +1,4 @@
-package com.realtimeeventticketing.tickets;
+package com.realtimeeventticketing.core.tickets;
 
 public enum TicketEventType {
     TICKET_PURCHASED,

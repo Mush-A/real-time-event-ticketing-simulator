@@ -1,4 +1,4 @@
-package com.realtimeeventticketing.users;
+package com.realtimeeventticketing.core.users;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -51,7 +51,4 @@ public abstract class User implements Runnable {
     public void addTicket() {
         numberOfTickets.incrementAndGet();
     }
-
-    @Override
-    public abstract void run();
 }

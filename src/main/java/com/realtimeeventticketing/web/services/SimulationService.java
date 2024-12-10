@@ -1,8 +1,11 @@
-package com.realtimeeventticketing.simulation;
+package com.realtimeeventticketing.web.services;
 
-import com.realtimeeventticketing.tickets.ITicketPoolObserver;
-import com.realtimeeventticketing.tickets.TicketEvent;
-import com.realtimeeventticketing.tickets.TicketEventType;
+import com.realtimeeventticketing.core.simulation.SimulationBuilder;
+import com.realtimeeventticketing.core.simulation.SimulationRequest;
+import com.realtimeeventticketing.core.simulation.SimulationStatusType;
+import com.realtimeeventticketing.core.tickets.ITicketPoolObserver;
+import com.realtimeeventticketing.core.tickets.TicketEvent;
+import com.realtimeeventticketing.core.tickets.TicketEventType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

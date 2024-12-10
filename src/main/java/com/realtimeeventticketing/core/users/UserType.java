@@ -1,4 +1,4 @@
-package com.realtimeeventticketing.users;
+package com.realtimeeventticketing.core.users;
 
 public enum UserType {
     VENDOR, CUSTOMER
