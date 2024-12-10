@@ -1,95 +1,42 @@
 package com.realtimeeventticketing.simulation;
 
-import com.realtimeeventticketing.tickets.ITicketPoolObserver;
 import com.realtimeeventticketing.tickets.TicketEvent;
-import com.realtimeeventticketing.tickets.TicketEventType;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-public class SimulationController implements ITicketPoolObserver {
+@RequestMapping("/simulation")
+public class SimulationController {
 
-    private final SimpMessagingTemplate messagingTemplate;
-    private SimulationBuilder simulationBuilder;
+    private final SimulationService simulationService;
 
-    public SimulationController(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
+    public SimulationController(SimulationService simulationService) {
+        this.simulationService = simulationService;
     }
 
-    @PostMapping("/simulation/start")
+    @PostMapping("/start")
     public String startSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
-        if (simulationBuilder != null && simulationBuilder.isSimulationRunning()) {
-            return "Simulation is already running.";
-        }
-
-        // Build the simulation using the builder pattern
-        simulationBuilder = new SimulationBuilder()
-                .setTotalTickets(request.getTotalTickets())
-                .setTicketReleaseRate(request.getTicketReleaseRate())
-                .setCustomerRetrievalRate(request.getCustomerRetrievalRate())
-                .setMaxTicketsCapacity(request.getMaxTicketsCapacity())
-                .setNumVendors(request.getNumVendors())
-                .setNumCustomers(request.getNumCustomers())
-                .buildTicketPool(this)
-                .buildSimulation();
-
-        simulationBuilder.startSimulation();
-        return "Simulation started";
+        return simulationService.startSimulation(request);
     }
 
-    @PostMapping("/simulation/stop")
+    @PostMapping("/stop")
     public String stopSimulation() throws InterruptedException {
-        if (simulationBuilder != null) {
-            simulationBuilder.stopSimulation();
-            return "Simulation stopped.";
-        } else {
-            return "No simulation is running.";
-        }
+        return simulationService.stopSimulation();
     }
 
-    @GetMapping("/simulation/status")
-    public SimulationStatusType simulationStatus() {
-        if (simulationBuilder != null && simulationBuilder.isSimulationRunning()) {
-            return SimulationStatusType.RUNNING;
-        } else {
-            return SimulationStatusType.NOT_RUNNING;
-        }
+    @GetMapping("/status")
+    public SimulationStatusType getSimulationStatus() {
+        return simulationService.getSimulationStatus();
     }
 
-    @PutMapping("/simulation/update")
+    @PutMapping("/update")
     public String updateSimulation(@RequestBody SimulationRequest request) {
-        if (simulationBuilder != null) {
-            simulationBuilder.updateSimulation(request);
-            return "Simulation updated.";
-        } else {
-            return "No simulation is running.";
-        }
+        return simulationService.updateSimulation(request);
     }
 
-    @GetMapping("/simulation/ticket-events")
+    @GetMapping("/ticket-events")
     public List<TicketEvent> getTicketEvents() {
-        if (simulationBuilder != null) {
-            return simulationBuilder.getTicketEvents();
-        }
-        return new ArrayList<>();
+        return simulationService.getTicketEvents();
     }
-
-    @Override
-    public void onTicketEvent(TicketEvent ticketEvent) throws InterruptedException {
-        sendSimulationUpdate(ticketEvent);
-
-        if (ticketEvent.getEventType() == TicketEventType.SIMULATION_OVER) {
-            stopSimulation();
-        }
-
-        System.out.println(ticketEvent.getMessage());
-    }
-
-    public void sendSimulationUpdate(TicketEvent ticketEvent) {
-        messagingTemplate.convertAndSend("/topic/simulation", ticketEvent);
-    }
-
 }
