@@ -1,8 +1,12 @@
 package com.realtimeeventticketing.cli;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Scanner;
 
 public class UserInputHandler {
+    private static final Logger log = LogManager.getLogger(UserInputHandler.class);
     private final Scanner scanner;
 
     public UserInputHandler(Scanner scanner) {
@@ -10,32 +14,32 @@ public class UserInputHandler {
     }
 
     public int getTotalTickets() {
-        System.out.print("Enter total number of tickets: ");
+        log.info("Enter total number of tickets: ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getTicketReleaseRate() {
-        System.out.print("Enter ticket release rate (milliseconds): ");
+        log.info("Enter ticket release rate (milliseconds): ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getCustomerRetrievalRate() {
-        System.out.print("Enter customer retrieval rate (milliseconds): ");
+        log.info("Enter customer retrieval rate (milliseconds): ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getMaxTicketsCapacity() {
-        System.out.print("Enter maximum tickets capacity: ");
+        log.info("Enter maximum tickets capacity: ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getNumVendors() {
-        System.out.print("Enter number of vendors: ");
+        log.info("Enter number of vendors: ");
         return InputValidator.getValidIntInput(scanner);
     }
 
     public int getNumCustomers() {
-        System.out.print("Enter number of customers: ");
+        log.info("Enter number of customers: ");
         return InputValidator.getValidIntInput(scanner);
     }
 }

@@ -3,6 +3,8 @@ package com.realtimeeventticketing.simulation;
 import com.realtimeeventticketing.tickets.ITicketPoolObserver;
 import com.realtimeeventticketing.tickets.TicketEvent;
 import com.realtimeeventticketing.tickets.TicketEventType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +14,7 @@ import java.util.List;
 @Service
 public class SimulationService implements ITicketPoolObserver {
 
+    private static final Logger log = LogManager.getLogger(SimulationService.class);
     private final SimpMessagingTemplate messagingTemplate;
     private SimulationBuilder simulationBuilder;
 
@@ -76,7 +79,7 @@ public class SimulationService implements ITicketPoolObserver {
             stopSimulation();
         }
 
-        System.out.println(ticketEvent.getMessage());
+        log.info(ticketEvent.getMessage());
     }
 
     private void sendSimulationUpdate(TicketEvent ticketEvent) {

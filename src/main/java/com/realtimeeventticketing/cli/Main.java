@@ -4,11 +4,14 @@ import com.realtimeeventticketing.simulation.SimulationBuilder;
 import com.realtimeeventticketing.tickets.ITicketPoolObserver;
 import com.realtimeeventticketing.tickets.TicketEvent;
 import com.realtimeeventticketing.tickets.TicketEventType;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Scanner;
 
 public class Main implements ITicketPoolObserver {
 
+    private static final Logger log = LogManager.getLogger(Main.class);
     private SimulationBuilder simulationBuilder;
 
     public static void main(String[] args) throws InterruptedException {
@@ -45,6 +48,6 @@ public class Main implements ITicketPoolObserver {
             stopSimulation();
         }
 
-        System.out.println(ticketEvent.getMessage());
+        log.info(ticketEvent.getMessage());
     }
 }

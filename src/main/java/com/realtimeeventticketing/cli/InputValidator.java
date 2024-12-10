@@ -1,8 +1,13 @@
 package com.realtimeeventticketing.cli;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Scanner;
 
 public class InputValidator {
+    private static final Logger log = LogManager.getLogger(InputValidator.class);
+
     public static int getValidIntInput(Scanner scanner) {
         while (true) {
             String input = scanner.nextLine();
@@ -13,7 +18,7 @@ public class InputValidator {
                 }
                 return value;
             } catch (NumberFormatException e) {
-                System.out.print("Invalid input. Please enter a non-negative integer:");
+                log.info("Invalid input. Please enter a non-negative integer:");
             }
         }
     }
