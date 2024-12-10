@@ -1,12 +1,23 @@
 package com.realtimeeventticketing.core.simulation;
 
+import java.util.UUID;
+
 public class SimulationConfig {
+    private final UUID id;
     private int totalTickets;
     private int ticketReleaseRate;
     private int customerRetrievalRate;
     private int maxTicketsCapacity;
     private int numVendors;
     private int numCustomers;
+
+    public SimulationConfig() {
+        this.id = UUID.randomUUID();
+    }
+
+    public UUID getId() {
+        return id;
+    }
 
     public int getTotalTickets() {
         return totalTickets;

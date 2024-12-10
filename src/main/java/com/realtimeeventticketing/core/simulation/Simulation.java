@@ -27,7 +27,7 @@ public class Simulation {
     public Simulation(SimulationConfig config, ITicketPoolObserver observer) {
         this.config = config;
 
-        this.ticketPool = new TicketPool(config.getTotalTickets(), config.getMaxTicketsCapacity());
+        this.ticketPool = new TicketPool(config);
         this.ticketPool.addObserver(observer);
 
         this.vendors = buildVendors(config.getNumVendors(), config.getTicketReleaseRate());

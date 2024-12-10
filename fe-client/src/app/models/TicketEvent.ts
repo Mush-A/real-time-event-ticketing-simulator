@@ -1,5 +1,6 @@
 import { Ticket } from './Ticket';
 import {User} from './User';
+import {Simulation} from './Simulation';
 
 export enum EventType {
   TICKET_ADDED = 'TICKET_ADDED',
@@ -14,4 +15,5 @@ export interface TicketEvent {
   message: string;
   user?: User;
   ticket?: Ticket;
+  SimulationConfig: Simulation;
 }

@@ -7,12 +7,11 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {EventType, TicketEvent} from '../../../models/TicketEvent';
 import {ChartDatum, ChartGroup} from '../../../models/ChartDatum';
 import {WebSocketService} from '../../../services/websocket.service';
-import {SimulationStatusType} from '../../../models/Simulation';
+import {Simulation, SimulationStatusType} from '../../../models/Simulation';
 import {UserType} from '../../../models/User';
 import {
-  SimulationSettingsComponent,
-  SimulationSettingsFormData
-} from '../simulation-settings/simulation-settings.component';
+  SimulationConfigComponent
+} from '../simulation-config/simulation-config.component';
 import {EventLogComponent} from '../event-log/event-log.component';
 import {DashboardComponent} from '../dashboard/dashboard.component';
 
@@ -22,7 +21,7 @@ import {DashboardComponent} from '../dashboard/dashboard.component';
   imports: [
     CommonModule,
     NgxChartsModule,
-    SimulationSettingsComponent,
+    SimulationConfigComponent,
     EventLogComponent,
     DashboardComponent,
   ],
@@ -54,6 +53,8 @@ export class SimulationComponent implements OnInit {
 
         this.groupEventsByUserType(this.messagesSubject.value);
 
+        console.log('Event', update);
+
         if (update.eventType === EventType.SIMULATION_OVER) {
           // If the simulation is over, check the current simulation status
           this.setIsSimulationRunning();
@@ -71,7 +72,7 @@ export class SimulationComponent implements OnInit {
     this.setIsSimulationRunning();
   }
 
-  handleFormSubmit(event: SimulationSettingsFormData) {
+  handleFormSubmit(event: Simulation) {
     this.http.post('api/simulation/start', event, { responseType: 'text' })
       .subscribe({
         next: (response: string) => {
@@ -99,7 +100,7 @@ export class SimulationComponent implements OnInit {
       });
   }
 
-  handleUpdateSimulation(event: SimulationSettingsFormData) {
+  handleUpdateSimulation(event: Simulation) {
     // Send a POST request to update the simulation
     this.http.put('api/simulation/update', event, { responseType: 'text' })
       .subscribe({

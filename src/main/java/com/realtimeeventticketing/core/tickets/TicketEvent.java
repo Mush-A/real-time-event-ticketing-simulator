@@ -1,5 +1,6 @@
 package com.realtimeeventticketing.core.tickets;
 
+import com.realtimeeventticketing.core.simulation.SimulationConfig;
 import com.realtimeeventticketing.core.users.User;
 
 public class TicketEvent {
@@ -7,21 +8,22 @@ public class TicketEvent {
     private final String message;
     private User user;
     private Ticket ticket;
+    private SimulationConfig simulationConfig;
 
-    // Constructor
-    public TicketEvent(TicketEventType eventType, String message) {
+    public TicketEvent(TicketEventType eventType, String message, SimulationConfig simulationConfig) {
         this.eventType = eventType;
         this.message = message;
+        this.simulationConfig = simulationConfig;
     }
 
-    public TicketEvent(TicketEventType eventType, String message, User user, Ticket ticket) {
+    public TicketEvent(TicketEventType eventType, String message, User user, Ticket ticket, SimulationConfig simulationConfig) {
         this.eventType = eventType;
         this.message = message;
         this.user = user;
         this.ticket = ticket;
+        this.simulationConfig = simulationConfig;
     }
 
-    // Getters and Setters
     public TicketEventType getEventType() {
         return eventType;
     }
@@ -36,6 +38,10 @@ public class TicketEvent {
 
     public Ticket getTicket() {
         return ticket;
+    }
+
+    public SimulationConfig getSimulationConfig() {
+        return simulationConfig;
     }
 }
 

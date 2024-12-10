@@ -1,15 +1,18 @@
 package com.realtimeeventticketing.core.tickets;
 
+import com.realtimeeventticketing.core.simulation.SimulationConfig;
 import com.realtimeeventticketing.core.users.User;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class TicketPool {
+    private final SimulationConfig simulationConfig;
     private final List<Ticket> tickets;
     private final List<TicketEvent> eventStore;
     private final Lock lock;
@@ -21,9 +24,10 @@ public class TicketPool {
     private int producedTicketsCount = 0;
     private boolean isProductionOver = false;
 
-    public TicketPool(int totalTickets, int maxTicketsCapacity) {
-        this.totalTickets = totalTickets;
-        this.maxTicketsCapacity = maxTicketsCapacity;
+    public TicketPool(SimulationConfig config) {
+        this.simulationConfig = config;
+        this.totalTickets = config.getTotalTickets();
+        this.maxTicketsCapacity = config.getMaxTicketsCapacity();
         this.tickets = Collections.synchronizedList(new ArrayList<>());
         this.eventStore = Collections.synchronizedList(new ArrayList<>());
         this.lock = new ReentrantLock();
@@ -33,10 +37,6 @@ public class TicketPool {
 
     public void addObserver(ITicketPoolObserver observer) {
         observers.add(observer);
-    }
-
-    public void removeObserver(ITicketPoolObserver observer) {
-        observers.remove(observer);
     }
 
     private void notifyObservers(TicketEvent event) throws InterruptedException {
@@ -52,7 +52,7 @@ public class TicketPool {
             if (!user.isRunning() || isProductionOver) return;
             if (producedTicketsCount >= totalTickets) {
                 String message = "All tickets have been produced. No more tickets can be added.";
-                TicketEvent event = new TicketEvent(TicketEventType.PRODUCTION_OVER, message);
+                TicketEvent event = new TicketEvent(TicketEventType.PRODUCTION_OVER, message, simulationConfig);
                 this.notifyObservers(event);
                 this.eventStore.add(event);
                 isProductionOver = true;
@@ -60,7 +60,7 @@ public class TicketPool {
             }
             if (tickets.size() == maxTicketsCapacity) {
                 String message = "Ticket pool is full. Cannot add more tickets. Waiting for customers to buy tickets.";
-                TicketEvent event = new TicketEvent(TicketEventType.POOL_FULL, message);
+                TicketEvent event = new TicketEvent(TicketEventType.POOL_FULL, message, simulationConfig);
                 this.notifyObservers(event);
                 this.eventStore.add(event);
                 condition.await();
@@ -69,7 +69,7 @@ public class TicketPool {
                 tickets.add(ticket);
                 producedTicketsCount++;
                 String message = "Ticket " + ticket.getId() + " added to the pool by " + user.getName();
-                TicketEvent event = new TicketEvent(TicketEventType.TICKET_ADDED, message, user, ticket);
+                TicketEvent event = new TicketEvent(TicketEventType.TICKET_ADDED, message, user, ticket, simulationConfig);
                 this.notifyObservers(event);
                 this.eventStore.add(event);
                 condition.signalAll();
@@ -86,7 +86,7 @@ public class TicketPool {
         try {
             if (tickets.isEmpty()) {
                 String message = "Ticket pool is empty. Cannot remove tickets. Waiting for vendors to add tickets.";
-                TicketEvent event = new TicketEvent(TicketEventType.POOL_EMPTY, message);
+                TicketEvent event = new TicketEvent(TicketEventType.POOL_EMPTY, message, simulationConfig);
                 this.notifyObservers(event);
                 this.eventStore.add(event);
                 condition.await();
@@ -94,14 +94,14 @@ public class TicketPool {
                 ticket = tickets.remove(0).buyTicket();
                 soldTicketsCount++; // Increment the sold tickets count
                 String message = "Ticket " + ticket.getId() + " purchased by " + user.getName();
-                TicketEvent event = new TicketEvent(TicketEventType.TICKET_PURCHASED, message, user, ticket);
+                TicketEvent event = new TicketEvent(TicketEventType.TICKET_PURCHASED, message, user, ticket, simulationConfig);
                 this.notifyObservers(event);
                 this.eventStore.add(event);
                 condition.signalAll();
 
                 if (soldTicketsCount >= totalTickets) {
                     String simulationOverMessage = "All tickets have been sold. Simulation is over.";
-                    TicketEvent simulationOverEvent = new TicketEvent(TicketEventType.SIMULATION_OVER, simulationOverMessage);
+                    TicketEvent simulationOverEvent = new TicketEvent(TicketEventType.SIMULATION_OVER, simulationOverMessage, simulationConfig);
                     this.notifyObservers(simulationOverEvent);
                     this.eventStore.add(simulationOverEvent);
                 }

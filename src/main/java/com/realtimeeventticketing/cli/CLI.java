@@ -32,10 +32,8 @@ public class CLI implements ITicketPoolObserver {
                 .setNumVendors(userInputHandler.getNumVendors())
                 .setNumCustomers(userInputHandler.getNumCustomers());
 
-        // Build the simulation and pass this CLI as the observer
         simulation = simulationBuilder.buildSimulation(this);
 
-        // Start the simulation
         simulation.run();
 
         log.info("Simulation started. Press 'q' to quit.");
@@ -70,10 +68,8 @@ public class CLI implements ITicketPoolObserver {
 
     @Override
     public void onTicketEvent(TicketEvent ticketEvent) {
-        // Log the event message
         log.info(ticketEvent.getMessage());
 
-        // Stop the simulation if the event signals it's over
         if (ticketEvent.getEventType() == TicketEventType.SIMULATION_OVER) {
             log.info("Simulation over event received.");
             stop();

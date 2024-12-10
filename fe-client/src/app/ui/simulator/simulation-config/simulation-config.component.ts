@@ -1,30 +1,22 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-
-export interface SimulationSettingsFormData {
-  totalTickets: number;
-  ticketReleaseRate: number;
-  customerRetrievalRate: number;
-  maxTicketsCapacity: number;
-  numVendors: number;
-  numCustomers: number;
-}
+import {Simulation} from '../../../models/Simulation';
 
 @Component({
-  selector: 'app-simulation-settings',
+  selector: 'app-simulation-config',
   standalone: true,
   imports: [
     ReactiveFormsModule,
     CommonModule
   ],
-  templateUrl: './simulation-settings.component.html',
+  templateUrl: './simulation-config.component.html',
 })
-export class SimulationSettingsComponent {
+export class SimulationConfigComponent {
   @Input() isSimulationRunning: boolean = false;
-  @Output() formSubmit = new EventEmitter<SimulationSettingsFormData>();
+  @Output() formSubmit = new EventEmitter<Simulation>();
   @Output() stopSimulation = new EventEmitter<void>();
-  @Output() updateSimulation = new EventEmitter<SimulationSettingsFormData>();
+  @Output() updateSimulation = new EventEmitter<Simulation>();
 
   simulationForm: FormGroup;
 
