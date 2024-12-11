@@ -1,5 +1,6 @@
 package com.realtimeeventticketing.cli;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.realtimeeventticketing.core.simulation.Simulation;
 import com.realtimeeventticketing.core.simulation.SimulationBuilder;
 import com.realtimeeventticketing.core.tickets.ITicketPoolObserver;
@@ -8,6 +9,8 @@ import com.realtimeeventticketing.core.tickets.TicketEventType;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Scanner;
 
 public class CLI implements ITicketPoolObserver {
@@ -36,8 +39,40 @@ public class CLI implements ITicketPoolObserver {
 
         simulation.run();
 
+        saveConfigToFile();
+
         log.info("Simulation started. Press 'q' to quit.");
         handleUserCommands(scanner);
+    }
+
+    private void saveConfigToFile() {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Object config = simulation.getConfig();
+
+            File directory = new File("cli_simulation_config");
+            if (!directory.exists() && !directory.mkdirs()) {
+                    log.error("Failed to create configuration directory: {}", directory.getAbsolutePath());
+                    return;
+            }
+
+            String baseFileName = "simulation_config";
+            String fileExtension = ".json";
+            File file;
+            int counter = 0;
+
+            do {
+                String fileName = baseFileName + (counter == 0 ? "" : counter) + fileExtension;
+                file = new File(directory, fileName);
+                counter++;
+            } while (file.exists());
+
+            objectMapper.writerWithDefaultPrettyPrinter().writeValue(file, config);
+            log.info("Simulation configuration saved to {}", file.getAbsolutePath());
+
+        } catch (IOException e) {
+            log.error("Failed to save simulation configuration: ", e);
+        }
     }
 
     private void handleUserCommands(Scanner scanner) {
