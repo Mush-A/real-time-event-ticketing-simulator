@@ -13,16 +13,27 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
+/**
+ * Command Line Interface for the simulation.
+ */
 public class CLI implements ITicketPoolObserver {
 
     private static final Logger log = LogManager.getLogger(CLI.class);
     private Simulation simulation;
 
+    /**
+     * Main method to start the CLI.
+     *
+     * @param args command line arguments
+     */
     public static void main(String[] args) {
         CLI main = new CLI();
         main.start();
     }
 
+    /**
+     * Starts the CLI and initializes the simulation.
+     */
     public void start() {
         Scanner scanner = new Scanner(System.in);
         UserInputHandler userInputHandler = new UserInputHandler(scanner);
@@ -45,6 +56,9 @@ public class CLI implements ITicketPoolObserver {
         handleUserCommands(scanner);
     }
 
+    /**
+     * Saves the current simulation configuration to a file.
+     */
     private void saveConfigToFile() {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
@@ -52,8 +66,8 @@ public class CLI implements ITicketPoolObserver {
 
             File directory = new File("cli_simulation_config");
             if (!directory.exists() && !directory.mkdirs()) {
-                    log.error("Failed to create configuration directory: {}", directory.getAbsolutePath());
-                    return;
+                log.error("Failed to create configuration directory: {}", directory.getAbsolutePath());
+                return;
             }
 
             String baseFileName = "simulation_config";
@@ -75,6 +89,11 @@ public class CLI implements ITicketPoolObserver {
         }
     }
 
+    /**
+     * Handles user commands from the CLI.
+     *
+     * @param scanner the scanner to read user input
+     */
     private void handleUserCommands(Scanner scanner) {
         while (true) {
             String input = scanner.nextLine().trim().toLowerCase();
@@ -89,6 +108,9 @@ public class CLI implements ITicketPoolObserver {
         }
     }
 
+    /**
+     * Stops the simulation.
+     */
     public void stop() {
         try {
             if (simulation != null && simulation.isRunning()) {
@@ -101,6 +123,11 @@ public class CLI implements ITicketPoolObserver {
         }
     }
 
+    /**
+     * Handles ticket events from the simulation.
+     *
+     * @param ticketEvent the ticket event
+     */
     @Override
     public void onTicketEvent(TicketEvent ticketEvent) {
         log.info(ticketEvent.getMessage());

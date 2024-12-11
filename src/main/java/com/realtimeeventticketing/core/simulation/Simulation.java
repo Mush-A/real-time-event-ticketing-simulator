@@ -14,6 +14,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Manages the simulation of ticket sales, including vendors and customers.
+ */
 public class Simulation {
     private final List<Vendor> vendors;
     private final List<Customer> customers;
@@ -24,6 +27,12 @@ public class Simulation {
 
     private final SimulationConfig config;
 
+    /**
+     * Constructs a Simulation with the specified configuration and observer.
+     *
+     * @param config the simulation configuration
+     * @param observer the observer for ticket pool events
+     */
     public Simulation(SimulationConfig config, ITicketPoolObserver observer) {
         this.config = config;
 
@@ -36,6 +45,13 @@ public class Simulation {
         this.executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors());
     }
 
+    /**
+     * Builds a list of vendors.
+     *
+     * @param numVendors the number of vendors
+     * @param ticketReleaseRate the ticket release rate
+     * @return the list of vendors
+     */
     private List<Vendor> buildVendors(int numVendors, int ticketReleaseRate) {
         List<Vendor> v = new ArrayList<>();
         for (int i = 0; i < numVendors; i++) {
@@ -44,6 +60,13 @@ public class Simulation {
         return v;
     }
 
+    /**
+     * Builds a list of customers.
+     *
+     * @param numCustomers the number of customers
+     * @param customerRetrievalRate the customer retrieval rate
+     * @return the list of customers
+     */
     private List<Customer> buildCustomers(int numCustomers, int customerRetrievalRate) {
         List<Customer> c = new ArrayList<>();
         for (int i = 0; i < numCustomers; i++) {
@@ -52,6 +75,9 @@ public class Simulation {
         return c;
     }
 
+    /**
+     * Starts the simulation by submitting vendors and customers to the executor service.
+     */
     public void run() {
         vendorLock.lock();
         try {
@@ -72,6 +98,11 @@ public class Simulation {
         }
     }
 
+    /**
+     * Stops the simulation and shuts down the executor service.
+     *
+     * @throws InterruptedException if interrupted while stopping
+     */
     public void stop() throws InterruptedException {
         vendorLock.lock();
         try {
@@ -104,22 +135,47 @@ public class Simulation {
         }
     }
 
+    /**
+     * Checks if the simulation is running.
+     *
+     * @return true if the simulation is running, false otherwise
+     */
     public boolean isRunning() {
         return !executorService.isShutdown();
     }
 
+    /**
+     * Gets the list of vendors.
+     *
+     * @return the list of vendors
+     */
     public List<Vendor> getVendors() {
         return new ArrayList<>(this.vendors);
     }
 
+    /**
+     * Gets the list of customers.
+     *
+     * @return the list of customers
+     */
     public List<Customer> getCustomers() {
         return new ArrayList<>(this.customers);
     }
 
+    /**
+     * Gets the ticket pool.
+     *
+     * @return the ticket pool
+     */
     public TicketPool getTicketPool() {
         return this.ticketPool;
     }
 
+    /**
+     * Updates the ticket release rate for all vendors.
+     *
+     * @param newRate the new ticket release rate
+     */
     public void updateVendorReleaseRate(int newRate) {
         vendorLock.lock();
         try {
@@ -131,6 +187,11 @@ public class Simulation {
         }
     }
 
+    /**
+     * Updates the customer retrieval rate for all customers.
+     *
+     * @param newRate the new customer retrieval rate
+     */
     public void updateCustomerRetrievalRate(int newRate) {
         customerLock.lock();
         try {
@@ -142,6 +203,11 @@ public class Simulation {
         }
     }
 
+    /**
+     * Updates the number of vendors.
+     *
+     * @param newVendorCount the new number of vendors
+     */
     public void updateVendors(int newVendorCount) {
         int currentVendorCount = vendors.size();
         if (newVendorCount > currentVendorCount) {
@@ -158,6 +224,11 @@ public class Simulation {
         }
     }
 
+    /**
+     * Updates the number of customers.
+     *
+     * @param newCustomerCount the new number of customers
+     */
     public void updateCustomers(int newCustomerCount) {
         int currentCustomerCount = customers.size();
         if (newCustomerCount > currentCustomerCount) {
@@ -174,11 +245,22 @@ public class Simulation {
         }
     }
 
+    /**
+     * Updates the ticket pool configuration.
+     *
+     * @param totalTickets the total number of tickets
+     * @param maxTicketsCapacity the maximum tickets capacity
+     */
     public void updateTicketPool(int totalTickets, int maxTicketsCapacity) {
         this.ticketPool.setTotalTickets(totalTickets);
         this.ticketPool.setMaxTicketsCapacity(maxTicketsCapacity);
     }
 
+    /**
+     * Gets the simulation configuration.
+     *
+     * @return the simulation configuration
+     */
     public SimulationConfig getConfig() {
         return this.config;
     }

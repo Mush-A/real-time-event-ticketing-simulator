@@ -11,6 +11,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Manages a pool of tickets for the simulation, handling ticket production and consumption.
+ */
 public class TicketPool {
     private final SimulationConfig simulationConfig;
     private final List<Ticket> tickets;
@@ -24,6 +27,11 @@ public class TicketPool {
     private int producedTicketsCount = 0;
     private boolean isProductionOver = false;
 
+    /**
+     * Constructs a TicketPool with the specified simulation configuration.
+     *
+     * @param config the simulation configuration
+     */
     public TicketPool(SimulationConfig config) {
         this.simulationConfig = config;
         this.totalTickets = config.getTotalTickets();
@@ -35,16 +43,33 @@ public class TicketPool {
         this.observers = new ArrayList<>();
     }
 
+    /**
+     * Adds an observer to the ticket pool.
+     *
+     * @param observer the observer to add
+     */
     public void addObserver(ITicketPoolObserver observer) {
         observers.add(observer);
     }
 
+    /**
+     * Notifies all observers of a ticket event.
+     *
+     * @param event the ticket event
+     * @throws InterruptedException if the thread is interrupted
+     */
     private void notifyObservers(TicketEvent event) throws InterruptedException {
         for (ITicketPoolObserver observer : observers) {
             observer.onTicketEvent(event);
         }
     }
 
+    /**
+     * Adds a ticket to the pool.
+     *
+     * @param user the user adding the ticket
+     * @throws InterruptedException if the thread is interrupted
+     */
     public void addTicket(User user) throws InterruptedException {
         lock.lock();
         Ticket ticket = null;
@@ -79,6 +104,12 @@ public class TicketPool {
         }
     }
 
+    /**
+     * Removes a ticket from the pool.
+     *
+     * @param user the user removing the ticket
+     * @throws InterruptedException if the thread is interrupted
+     */
     public void removeTicket(User user) throws InterruptedException {
         lock.lock();
         Ticket ticket = null;
@@ -92,7 +123,7 @@ public class TicketPool {
                 condition.await();
             } else {
                 ticket = tickets.remove(0).buyTicket();
-                soldTicketsCount++; // Increment the sold tickets count
+                soldTicketsCount++;
                 String message = "Ticket " + ticket.getId() + " purchased by " + user.getName();
                 TicketEvent event = new TicketEvent(TicketEventType.TICKET_PURCHASED, message, user, ticket, simulationConfig);
                 this.notifyObservers(event);
@@ -111,6 +142,9 @@ public class TicketPool {
         }
     }
 
+    /**
+     * Stops all threads waiting on the condition.
+     */
     public void stopAllWaiting() {
         lock.lock();
         try {
@@ -123,16 +157,26 @@ public class TicketPool {
         }
     }
 
+    /**
+     * Sets the maximum tickets capacity.
+     *
+     * @param maxTicketsCapacity the maximum tickets capacity
+     */
     public void setMaxTicketsCapacity(int maxTicketsCapacity) {
         lock.lock();
         try {
             this.maxTicketsCapacity = maxTicketsCapacity;
-            condition.signalAll(); // Notify all waiting threads in case the new capacity allows for more tickets
+            condition.signalAll();
         } finally {
             lock.unlock();
         }
     }
 
+    /**
+     * Sets the total number of tickets.
+     *
+     * @param totalTickets the total number of tickets
+     */
     public void setTotalTickets(int totalTickets) {
         lock.lock();
         try {
@@ -143,6 +187,11 @@ public class TicketPool {
         }
     }
 
+    /**
+     * Gets the event store containing all ticket events.
+     *
+     * @return the event store
+     */
     public List<TicketEvent> getEventStore() {
         return eventStore;
     }

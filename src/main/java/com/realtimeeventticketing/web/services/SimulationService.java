@@ -14,19 +14,49 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service class for managing simulation operations.
+ */
 @Service
 public class SimulationService implements ITicketPoolObserver {
 
+    /**
+     * Logger instance for logging events.
+     */
     private static final Logger log = LogManager.getLogger(SimulationService.class);
+
+    /**
+     * Template for sending messages to WebSocket clients.
+     */
     private final SimpMessagingTemplate messagingTemplate;
+
+    /**
+     * Repository for managing simulation configurations.
+     */
     private final SimulationConfigRepository simulationConfigRepository;
+
+    /**
+     * The current simulation instance.
+     */
     private Simulation simulation;
 
+    /**
+     * Constructs a SimulationService with the specified repository and messaging template.
+     *
+     * @param simulationConfigRepository the simulation configuration repository
+     * @param messagingTemplate the messaging template
+     */
     public SimulationService(SimulationConfigRepository simulationConfigRepository, SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
         this.simulationConfigRepository = simulationConfigRepository;
     }
 
+    /**
+     * Starts a new simulation with the given request.
+     *
+     * @param request the simulation request
+     * @return a message indicating the result of the operation
+     */
     public String startSimulation(SimulationRequest request) {
         if (simulation != null && simulation.isRunning()) {
             return "Simulation is already running.";
@@ -40,7 +70,7 @@ public class SimulationService implements ITicketPoolObserver {
                 .setNumVendors(request.getNumVendors())
                 .setNumCustomers(request.getNumCustomers());
 
-        simulation = builder.buildSimulation(this); // Pass this service as the observer
+        simulation = builder.buildSimulation(this);
         simulation.run();
 
         SimulationConfigEntity simulationConfigEntity = new SimulationConfigEntity(simulation.getConfig());
@@ -50,6 +80,11 @@ public class SimulationService implements ITicketPoolObserver {
         return "Simulation started.";
     }
 
+    /**
+     * Stops the currently running simulation.
+     *
+     * @return a message indicating the result of the operation
+     */
     public String stopSimulation() {
         if (simulation != null && simulation.isRunning()) {
             try {
@@ -65,6 +100,11 @@ public class SimulationService implements ITicketPoolObserver {
         return "No simulation is running.";
     }
 
+    /**
+     * Gets the current status of the simulation.
+     *
+     * @return the current simulation status
+     */
     public SimulationStatusType getSimulationStatus() {
         if (simulation != null && simulation.isRunning()) {
             return SimulationStatusType.RUNNING;
@@ -72,6 +112,12 @@ public class SimulationService implements ITicketPoolObserver {
         return SimulationStatusType.NOT_RUNNING;
     }
 
+    /**
+     * Updates the simulation with the given request.
+     *
+     * @param request the simulation request
+     * @return a message indicating the result of the operation
+     */
     public String updateSimulation(SimulationRequest request) {
         if (simulation != null && simulation.isRunning()) {
             SimulationBuilder builder = new SimulationBuilder()
@@ -89,6 +135,11 @@ public class SimulationService implements ITicketPoolObserver {
         return "No simulation is running.";
     }
 
+    /**
+     * Gets the list of ticket events.
+     *
+     * @return the list of ticket events
+     */
     public List<TicketEvent> getTicketEvents() {
         if (simulation != null) {
             return simulation.getTicketPool().getEventStore();
@@ -96,6 +147,11 @@ public class SimulationService implements ITicketPoolObserver {
         return new ArrayList<>();
     }
 
+    /**
+     * Handles ticket events and sends updates to WebSocket clients.
+     *
+     * @param ticketEvent the ticket event
+     */
     @Override
     public void onTicketEvent(TicketEvent ticketEvent) {
         sendSimulationUpdate(ticketEvent);
@@ -107,10 +163,20 @@ public class SimulationService implements ITicketPoolObserver {
         log.info(ticketEvent.getMessage());
     }
 
+    /**
+     * Sends a simulation update to WebSocket clients.
+     *
+     * @param ticketEvent the ticket event
+     */
     private void sendSimulationUpdate(TicketEvent ticketEvent) {
         messagingTemplate.convertAndSend("/topic/simulation", ticketEvent);
     }
 
+    /**
+     * Gets all simulation configurations.
+     *
+     * @return the list of all simulation configurations
+     */
     public List<SimulationConfigEntity> getAllSimulationConfig() {
         return simulationConfigRepository.findAll();
     }
