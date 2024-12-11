@@ -15,5 +15,5 @@ export interface TicketEvent {
   message: string;
   user?: User;
   ticket?: Ticket;
-  SimulationConfig: Simulation;
+  simulationConfig: Simulation;
 }

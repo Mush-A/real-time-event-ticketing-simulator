@@ -1,5 +1,4 @@
 import {Component, OnInit} from '@angular/core';
-import {FormGroup, ReactiveFormsModule} from '@angular/forms';
 import {HttpClient} from '@angular/common/http';
 import {CommonModule} from '@angular/common';
 import {BehaviorSubject} from 'rxjs';
@@ -7,7 +6,7 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {EventType, TicketEvent} from '../../../models/TicketEvent';
 import {ChartDatum, ChartGroup} from '../../../models/ChartDatum';
 import {WebSocketService} from '../../../services/websocket.service';
-import {Simulation, SimulationStatusType} from '../../../models/Simulation';
+import {Simulation, SimulationForm, SimulationStatusType} from '../../../models/Simulation';
 import {UserType} from '../../../models/User';
 import {
   SimulationConfigComponent
@@ -72,7 +71,7 @@ export class SimulationComponent implements OnInit {
     this.setIsSimulationRunning();
   }
 
-  handleFormSubmit(event: Simulation) {
+  handleFormSubmit(event: SimulationForm) {
     this.http.post('api/simulation/start', event, { responseType: 'text' })
       .subscribe({
         next: (response: string) => {
@@ -100,7 +99,7 @@ export class SimulationComponent implements OnInit {
       });
   }
 
-  handleUpdateSimulation(event: Simulation) {
+  handleUpdateSimulation(event: SimulationForm) {
     // Send a POST request to update the simulation
     this.http.put('api/simulation/update', event, { responseType: 'text' })
       .subscribe({

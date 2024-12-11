@@ -7,6 +7,7 @@ export enum SimulationStatusType {
 
 
 export interface Simulation {
+  id: string;
   totalTickets: number;
   ticketReleaseRate: number;
   customerRetrievalRate: number;
@@ -14,3 +15,5 @@ export interface Simulation {
   numVendors: number;
   numCustomers: number;
 }
+
+export interface SimulationForm extends Omit<Simulation, 'id'> {}

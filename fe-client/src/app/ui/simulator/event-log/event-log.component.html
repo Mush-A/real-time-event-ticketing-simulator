@@ -7,6 +7,9 @@
       [ngClass]="getMessageClass(message.eventType)"
       class="p-4 rounded transition duration-200 shadow-sm"
     >
+      <div class="text-xs font-semibold">
+        Simulation Id: {{message.simulationConfig.id}}
+      </div>
       <div class="flex flex-col space-y-1">
         <span class="font-bold flex justify-between">
         <span>

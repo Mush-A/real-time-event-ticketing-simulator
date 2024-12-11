@@ -1,7 +1,7 @@
 import {Component, EventEmitter, Input, Output} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CommonModule} from '@angular/common';
-import {Simulation} from '../../../models/Simulation';
+import {Simulation, SimulationForm} from '../../../models/Simulation';
 
 @Component({
   selector: 'app-simulation-config',
@@ -14,9 +14,9 @@ import {Simulation} from '../../../models/Simulation';
 })
 export class SimulationConfigComponent {
   @Input() isSimulationRunning: boolean = false;
-  @Output() formSubmit = new EventEmitter<Simulation>();
+  @Output() formSubmit = new EventEmitter<SimulationForm>();
   @Output() stopSimulation = new EventEmitter<void>();
-  @Output() updateSimulation = new EventEmitter<Simulation>();
+  @Output() updateSimulation = new EventEmitter<SimulationForm>();
 
   simulationForm: FormGroup;
 
