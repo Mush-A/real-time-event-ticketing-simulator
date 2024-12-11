@@ -8,11 +8,11 @@
         <li *ngFor="let simulation of simulations" class="bg-white shadow-lg rounded-lg p-6">
           <h2 class="text-2xl font-semibold text-gray-800 mb-2">Simulation {{simulation.id}}</h2>
           <p class="text-gray-600">Total Tickets: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
-          <p class="text-gray-600">Ticket Release Rate: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
-          <p class="text-gray-600">Customer Retrieval Rate: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
-          <p class="text-gray-600">Max Ticket Capacity: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
-          <p class="text-gray-600">Number of vendors: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
-          <p class="text-gray-600">Number of customers: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
+          <p class="text-gray-600">Ticket Release Rate: <span class="font-semibold">{{simulation.ticketReleaseRate}}</span></p>
+          <p class="text-gray-600">Customer Retrieval Rate: <span class="font-semibold">{{simulation.customerRetrievalRate}}</span></p>
+          <p class="text-gray-600">Max Ticket Capacity: <span class="font-semibold">{{simulation.maxTicketsCapacity}}</span></p>
+          <p class="text-gray-600">Number of vendors: <span class="font-semibold">{{simulation.numVendors}}</span></p>
+          <p class="text-gray-600">Number of customers: <span class="font-semibold">{{simulation.numCustomers}}</span></p>
         </li>
       </ul>
     </div>
