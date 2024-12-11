@@ -178,4 +178,8 @@ public class Simulation {
         this.ticketPool.setTotalTickets(totalTickets);
         this.ticketPool.setMaxTicketsCapacity(maxTicketsCapacity);
     }
+
+    public SimulationConfig getConfig() {
+        return this.config;
+    }
 }

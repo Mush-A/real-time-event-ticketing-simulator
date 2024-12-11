@@ -1,5 +1,6 @@
-<div class="flex h-screen bg-gray-100 p-4 gap-4">
+<div class="flex h-screen p-4 gap-4">
   <div class="flex flex-col w-1/4 gap-4">
+    <app-nav />
     <div class="w-full bg-white shadow-lg rounded-lg p-4 justify-center flex gap-4">
       <button (click)="display = 'eventLog'" class="border-2 rounded p-2 text-zinc-600 font-semibold w-1/2" [class.border-blue-200]="display === 'eventLog'">
         Event Log
@@ -17,13 +18,13 @@
   </div>
 
   <div class="flex flex-col w-1/2 flex-grow">
-    <div *ngIf="display === 'eventLog'" class="h-full">
+    <div *ngIf="display === 'eventLog'" class="h-full flex-1">
       <app-event-log
         [messages]="(messages$ | async) ?? []"
         (clearMessages)="clearMessages()"
       />
     </div>
-    <div *ngIf="display === 'dashboard'" class="h-full">
+    <div *ngIf="display === 'dashboard'" class="h-full flex-1">
       <app-dashboard
         [chartData]="chartData"
         (clearChartData)="clearChartData()"

@@ -6,13 +6,14 @@ import {NgxChartsModule} from '@swimlane/ngx-charts';
 import {EventType, TicketEvent} from '../../../models/TicketEvent';
 import {ChartDatum, ChartGroup} from '../../../models/ChartDatum';
 import {WebSocketService} from '../../../services/websocket.service';
-import {Simulation, SimulationForm, SimulationStatusType} from '../../../models/Simulation';
+import {SimulationForm, SimulationStatusType} from '../../../models/Simulation';
 import {UserType} from '../../../models/User';
 import {
   SimulationConfigComponent
 } from '../simulation-config/simulation-config.component';
 import {EventLogComponent} from '../event-log/event-log.component';
 import {DashboardComponent} from '../dashboard/dashboard.component';
+import {NavComponent} from '../../common/nav/nav.component';
 
 @Component({
   selector: 'app-simulation',
@@ -23,6 +24,7 @@ import {DashboardComponent} from '../dashboard/dashboard.component';
     SimulationConfigComponent,
     EventLogComponent,
     DashboardComponent,
+    NavComponent,
   ],
   templateUrl: './simulation.component.html',
 })

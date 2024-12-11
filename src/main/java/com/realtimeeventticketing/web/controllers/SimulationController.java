@@ -1,6 +1,7 @@
 package com.realtimeeventticketing.web.controllers;
 
 import com.realtimeeventticketing.core.simulation.SimulationRequest;
+import com.realtimeeventticketing.web.persistence.SimulationConfigEntity;
 import com.realtimeeventticketing.web.services.SimulationService;
 import com.realtimeeventticketing.core.simulation.SimulationStatusType;
 import com.realtimeeventticketing.core.tickets.TicketEvent;
@@ -19,12 +20,12 @@ public class SimulationController {
     }
 
     @PostMapping("/start")
-    public String startSimulation(@RequestBody SimulationRequest request) throws InterruptedException {
+    public String startSimulation(@RequestBody SimulationRequest request) {
         return simulationService.startSimulation(request);
     }
 
     @PostMapping("/stop")
-    public String stopSimulation() throws InterruptedException {
+    public String stopSimulation() {
         return simulationService.stopSimulation();
     }
 
@@ -41,5 +42,10 @@ public class SimulationController {
     @GetMapping("/ticket-events")
     public List<TicketEvent> getTicketEvents() {
         return simulationService.getTicketEvents();
+    }
+
+    @GetMapping("/get-all-simulation-config")
+    public List<SimulationConfigEntity> getAllSimulationConfig() {
+        return simulationService.getAllSimulationConfig();
     }
 }

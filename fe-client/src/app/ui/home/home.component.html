@@ -1,0 +1,25 @@
+<div class="flex flex-col max-w-4xl mx-auto p-4 h-screen">
+  <app-nav />
+  <h2 class="text-3xl font-semibold m-4 text-center">Previous Simulations</h2>
+
+  <div class="flex-1 overflow-y-scroll p-4">
+    <div *ngIf="simulations.length > 0; else noSimulations">
+      <ul class="space-y-6">
+        <li *ngFor="let simulation of simulations" class="bg-white shadow-lg rounded-lg p-6">
+          <h2 class="text-2xl font-semibold text-gray-800 mb-2">Simulation {{simulation.id}}</h2>
+          <p class="text-gray-600">Total Tickets: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
+          <p class="text-gray-600">Ticket Release Rate: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
+          <p class="text-gray-600">Customer Retrieval Rate: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
+          <p class="text-gray-600">Max Ticket Capacity: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
+          <p class="text-gray-600">Number of vendors: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
+          <p class="text-gray-600">Number of customers: <span class="font-semibold">{{simulation.totalTickets}}</span></p>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <ng-template #noSimulations>
+    <p class="text-center text-gray-500">No previous simulations found.</p>
+  </ng-template>
+</div>

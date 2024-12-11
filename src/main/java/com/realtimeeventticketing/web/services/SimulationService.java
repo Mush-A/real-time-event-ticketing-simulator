@@ -1,12 +1,11 @@
 package com.realtimeeventticketing.web.services;
 
-import com.realtimeeventticketing.core.simulation.Simulation;
-import com.realtimeeventticketing.core.simulation.SimulationBuilder;
-import com.realtimeeventticketing.core.simulation.SimulationRequest;
-import com.realtimeeventticketing.core.simulation.SimulationStatusType;
+import com.realtimeeventticketing.core.simulation.*;
 import com.realtimeeventticketing.core.tickets.ITicketPoolObserver;
 import com.realtimeeventticketing.core.tickets.TicketEvent;
 import com.realtimeeventticketing.core.tickets.TicketEventType;
+import com.realtimeeventticketing.web.persistence.SimulationConfigEntity;
+import com.realtimeeventticketing.web.persistence.SimulationConfigRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -20,10 +19,12 @@ public class SimulationService implements ITicketPoolObserver {
 
     private static final Logger log = LogManager.getLogger(SimulationService.class);
     private final SimpMessagingTemplate messagingTemplate;
+    private final SimulationConfigRepository simulationConfigRepository;
     private Simulation simulation;
 
-    public SimulationService(SimpMessagingTemplate messagingTemplate) {
+    public SimulationService(SimulationConfigRepository simulationConfigRepository, SimpMessagingTemplate messagingTemplate) {
         this.messagingTemplate = messagingTemplate;
+        this.simulationConfigRepository = simulationConfigRepository;
     }
 
     public String startSimulation(SimulationRequest request) {
@@ -41,6 +42,9 @@ public class SimulationService implements ITicketPoolObserver {
 
         simulation = builder.buildSimulation(this); // Pass this service as the observer
         simulation.run();
+
+        SimulationConfigEntity simulationConfigEntity = new SimulationConfigEntity(simulation.getConfig());
+        this.simulationConfigRepository.save(simulationConfigEntity);
 
         log.info("Simulation started.");
         return "Simulation started.";
@@ -105,5 +109,9 @@ public class SimulationService implements ITicketPoolObserver {
 
     private void sendSimulationUpdate(TicketEvent ticketEvent) {
         messagingTemplate.convertAndSend("/topic/simulation", ticketEvent);
+    }
+
+    public List<SimulationConfigEntity> getAllSimulationConfig() {
+        return simulationConfigRepository.findAll();
     }
 }
