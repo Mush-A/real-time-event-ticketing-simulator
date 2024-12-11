@@ -36,7 +36,6 @@ The ticket pool in the system follows a consumer-producer model. Vendors act as 
 
 - Java 17 or higher
 - Gradle
-- Node.js and npm (for front-end development)
 
 ### Building the Project
 
@@ -58,35 +57,20 @@ To start the application, run the following command:
 
 Once the application is running, you can access the web interface at `http://localhost:8080`.
 
-## Frontend Architecture
+## Frontend
 
-The frontend of the Real-Time Event Ticketing System is built using Angular, a popular framework for building web applications. The frontend communicates with the backend services to provide a seamless user experience for managing and interacting with simulations.
+The frontend of the Real-Time Event Ticketing System is built using Angular.
 
 ### Key Features
 
 - **Real-Time Updates**: Utilizes WebSocket connections to receive real-time updates about ticket events and simulation status.
-- **Responsive Design**: Ensures that the application is accessible and usable on various devices, including desktops, tablets, and mobile phones.
+- **Responsive Design**: Ensures that the application usable in various desktop screens.
 - **Modular Structure**: The frontend code is organized into modules, components, and services to maintain a clean and scalable architecture.
 
-### Directory Structure
+## Running the Frontend
 
-The `/fe-client` directory contains the following key folders and files:
-
-- **src/app**: Contains the main application code, including modules, components, and services.
-    - **components**: Houses the Angular components used in the application, such as the simulation dashboard, ticket event list, and configuration forms.
-    - **services**: Contains the services responsible for making HTTP requests to the backend and managing WebSocket connections.
-    - **models**: Defines the TypeScript interfaces and classes used throughout the application.
-    - **modules**: Organizes the application into feature modules for better maintainability and scalability.
-- **assets**: Contains static assets such as images, stylesheets, and fonts.
-- **environments**: Holds the environment configuration files for different build environments (e.g., development, production).
-
-### Key Components
-
-- **SimulationDashboardComponent**: Displays the current status of the simulation, including active ticket events and simulation parameters.
-- **TicketEventListComponent**: Shows a list of ticket events in real-time, updating as new events occur.
-- **SimulationConfigFormComponent**: Provides a form for creating and updating simulation configurations.
-
-### Running the Frontend
+### Prerequisites
+- Node JS LTS
 
 To run the frontend application, navigate to the `/fe-client` directory and use the following commands:
 
