@@ -57,7 +57,7 @@ To start the application, run the following command:
 
 Once the application is running, you can access the web interface at `http://localhost:8080`.
 
-## Frontend Architecture
+## Frontend
 
 The frontend of the Real-Time Event Ticketing System is built using Angular.
 
