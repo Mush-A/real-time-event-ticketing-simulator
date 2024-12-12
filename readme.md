@@ -30,36 +30,9 @@ The Web module is built using Spring Boot and provides a web interface for inter
 
 The ticket pool in the system follows a consumer-producer model. Vendors act as producers, releasing tickets into the pool, while customers act as consumers, retrieving tickets from the pool. This model ensures a dynamic and real-time flow of tickets within the system.
 
-## Getting Started
-
-### Prerequisites
-
-- Java 17 or higher
-- Gradle
-
-### Building the Project
-
-To build the project, run the following command:
-
-```sh
-./gradlew build
-```
-
-### Running the Application
-
-To start the application, run the following command:
-
-```sh
-./gradlew bootRun
-```
-
-### Accessing the Web Interface
-
-Once the application is running, you can access the web interface at `http://localhost:8080`.
-
 ## Frontend
 
-The frontend of the Real-Time Event Ticketing System is built using Angular.
+The frontend of the Real-Time Event Ticketing System is built using Angular and Tailwind.
 
 ### Key Features
 
@@ -67,10 +40,26 @@ The frontend of the Real-Time Event Ticketing System is built using Angular.
 - **Responsive Design**: Ensures that the application usable in various desktop screens.
 - **Modular Structure**: The frontend code is organized into modules, components, and services to maintain a clean and scalable architecture.
 
-## Running the Frontend
+## Set Up
 
 ### Prerequisites
+- Java 17
+- Gradle
 - Node JS LTS
+
+To build the backend,
+
+1. Navigate to the `/be-core` directory and run the following command:
+
+    ```sh
+    ./gradlew build
+    ```
+   
+2. Start the backend application by running the following command:
+
+    ```sh
+    ./gradlew bootRun
+    ```
 
 To run the frontend application, navigate to the `/fe-client` directory and use the following commands:
 
